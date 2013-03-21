@@ -67,10 +67,16 @@ class Core{
 
 	}
 
-
-
 	static function conf($name){
 		return self::inst()->conf->get($name);
+	}
+
+	static function view($name, $data=array()){
+		return new View($name, $data);
+	}
+
+	static function model($name){
+		return new Model(self::conf('db.connection.'.$name));
 	}
 
 }
