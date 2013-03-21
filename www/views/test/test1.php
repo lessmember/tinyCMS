@@ -1,0 +1,1 @@
+<div style="color: #844;"><?=$msg?></div>
