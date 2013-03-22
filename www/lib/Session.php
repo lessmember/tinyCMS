@@ -4,11 +4,11 @@ session_start();
 
 class Session {
 
-	function set($name, $val){
+	static function set($name, $val){
 		$_SESSION[$name] = $val;
 	}
 
-	function get($name){
+	static function get($name){
 		return arrval($_SESSION, $name);
 	}
 }

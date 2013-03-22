@@ -2,10 +2,24 @@
 
 class Login extends Controller{
 
-	function index(){}
+	function __construct(){
+		parent::__construct();
+		$this->regularPage();
+	}
 
-	function form(){}
+	function index(){
+		$redirect = get('redirect');
+		print ($redirect);
+		p( tpl::url('login', 'check', array('Vasya', 'Pupkin')));
+		$this->form();
+	}
 
-	function check(){}
+	function form(){
+		Core::view('login/form');
+	}
+
+	function check(){
+
+	}
 
 }

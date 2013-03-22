@@ -67,6 +67,10 @@ class Core{
 
 	}
 
+	static function context($name){
+		return self::inst()->context->get($name);
+	}
+
 	static function conf($name){
 		return self::inst()->conf->get($name);
 	}

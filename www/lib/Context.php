@@ -9,6 +9,8 @@ class Context {
 	}
 
 	function baseContext(){
+		//p($_SERVER);
+		$this->set('host', $_SERVER['HTTP_HOST']);
 		$controllerName = get(Core::conf('controllerName'));
 		if(!$controllerName)
 			$controllerName = Core::conf('defaultController');
@@ -32,8 +34,12 @@ class Context {
 		$this->data[$name] = $val;
 	}
 
-	function __get($name){
+	function get($name){
 		if(isset($this->data[$name]))
 			return $this->data[$name];
+	}
+
+	function __get($name){
+		return $this->get($name);
 	}
 }

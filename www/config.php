@@ -10,7 +10,7 @@ $config = array(
 	'paramsName' => 'option',
 
 	'db.connection.default' => array(
-		'name' => 'tiny_cms',
+		'name' => 'tinycms',
 		'login' => 'devadmin',
 		'password' => '1',
 		'port' => '',
