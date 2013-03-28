@@ -1,0 +1,85 @@
+	- = Ru = -
+
+1. Общая информация.
+Данный микро-фреймворк написан как пример полноценного веб-фреймворка минимальной конфигурации:
+ - объектная реализация архитектуры,
+ - MVC паттерн,
+ - автоматическая загрузка классов-контроллеров.
+ - нативный PHP-шаблонизатор,
+ - модели с параметризованными запросами на базе класса PDO, с некоторыми дополнениями.
+ - call-параметры (контроллер, метод, параметры метода) передаются как элементы GET запроса.
+
+2. Аскетичность (или, чего нет).
+В связи с минимализмом, не  были реализованы такие необязательные для мини-проекта элементы как:
+- ЧПУ,
+- произвольная маршрутизация.
+- использование "из коробки" других СУБД кроме MySQL
+- ORM
+
+3. Настраиваемая часть (опции).
+Все настройки сосредоточены в файле DOC_ROOT/config.php.
+call-параметры:
+ - controllerName
+ - methodName
+ - paramsName
+исполняемые сущности по умолчанию:
+- defaultController
+- defaultMethod
+параметры подключения к БД:
+- db.connection.[nameOfOptionSet] - [nameOfOptionSet] предполагает возможность использования нескольких подключений.
+
+4. Достоинства.
+	1. Быстрый. На выполнение запроса затрачивается порядка 1 мсек при использовании шаблонизатора (без использования Модели).
+	2. Маловесный, меньше 60кБ на диске. Около 250кБ памяти при выполнении.
+	3. Не требует значительных затрат времени на изучение.
+
+5. Использование.
+	5.1. Общий вид http запросов:
+http://host/?module=controllerName&action=methodName&options[0]=valueOfParam1&options[1]=valueOfParam2&options[2]=valueOfParam3
+Валидный урл (часть с "?") генерируется функцией
+	tpl::url($controller, $method=false, $params=false);
+по параметрам, указанным в config.php.
+	5.2. Класс контроллера содержит методы, вызываемые по указанному в параметрах запроса имени.
+При отсутствии имени метода вызывается метод по умолчанию, изначально - index().
+При отсутствии имени контроллера вызывается контроллер по умолчанию, изначально - main.
+
+	5.3. Использование шаблона (представления, view).
+Не отличается от использования нативных шаблонов в CodeIgniter, Kohana.
+
+//$view = Core::view('templateFileName', $arrayOfData);
+
+// in controller:
+$view = Core::view('user/personal', array('userName'=> $user->name)); // загружает файл /views/user/personal.php, возвращает экземпляр класса View.
+
+print $view->render();
+//or
+$view->render(true);
+
+// in view:
+<div>Hello dier user <?=$userName?>!</div>
+
+	5.4 Использование модели:
+// in controller
+$model = Core::model('users'); // загружает класс Users_Model из файла /models/users_model.php, возвращает экземпляр класса.
+$userData = $model->getData($userId);
+
+// in model
+
+class Users_Model extends Model{
+	function getData($userId){
+		$sql = "SELECT * FROM `users` WHERE `id` = ?";
+		$res = $this->db->select($sql, array($userId));
+		return empty($res) ? false : $res[0];
+	}
+}
+
+		5.4.1. Методы драйвера Модели (Model::$db).
+- query($sql, $options=null) - выполняет запрос $sql c параметрами $options. правила составления запросов и парметров соответствуют описанию PDO
+- select($sql, $options=null) - то же что и query(), но возвращает массив полученных данных в виде объектов (опция PDO::FETCH_CLASS).
+- update ($sql, $options=null) - то же что и query(), но возвращает количестово измененных строк
+- delete ($sql, $options=null) - то же что и query(), но возвращает количестово измененных строк
+- insert ($sql, $options=null) - то же что и query(), но возвращает последний вставленный ID
+- do_query($sql, $options=null) - то же что и query(), но возвращает PDOSatement ( http://php.net/manual/en/class.pdostatement.php ).
+Возвращенный PDOSatement позволяет получить более широкий доступ к результатам запроса.
+
+

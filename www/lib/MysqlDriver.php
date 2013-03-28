@@ -2,6 +2,8 @@
 
 class MysqlDriver extends PDO {
 
+	private $lastResult = null;
+
 	function __construct($options){
 		$dns = "mysql:dbname={$options['name']};host={$options['host']}";
 		if (isset($options['port']))
@@ -14,10 +16,15 @@ class MysqlDriver extends PDO {
 			$data = array($data);
 		$stat = $this->prepare($sql); // returns PDOSatement
 		$stat->execute($data);
+		$this->lastResult = $stat;
 		$errorInfo = $stat->errorInfo();
 		if($errorInfo[0] != '00000')
 			throw new Exception('Database driver error:'.$errorInfo[2]. ' <br /> ' . $stat->queryString);
 		return $stat;
+	}
+
+	function query($sql, $options=null){
+		$this->do_query($sql, $options);
 	}
 
 	function select($sql, $options=null){
