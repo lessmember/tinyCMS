@@ -14,7 +14,7 @@ class MysqlDriver extends PDO {
 	function do_query($sql, $data=null){
 		if (!is_array($data))
 			$data = array($data);
-		$stat = $this->prepare($sql); // returns PDOSatement
+		$stat = $this->prepare($sql); // returns PDOStatement
 		$stat->execute($data);
 		$this->lastResult = $stat;
 		$errorInfo = $stat->errorInfo();

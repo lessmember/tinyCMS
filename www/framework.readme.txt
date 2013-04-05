@@ -32,6 +32,8 @@ call-параметры:
 	1. Быстрый. На выполнение запроса затрачивается порядка 1 мсек при использовании шаблонизатора (без использования Модели).
 	2. Маловесный, меньше 60кБ на диске. Около 250кБ памяти при выполнении.
 	3. Не требует значительных затрат времени на изучение.
+- для получения информации о статистике выполнения используйте параметры запроса:
+&global_logging_full_exec_time=1&global_logging_ram_usage=1
 
 5. Использование.
 	5.1. Общий вид http запросов:
@@ -49,22 +51,28 @@ http://host/?module=controllerName&action=methodName&options[0]=valueOfParam1&op
 //$view = Core::view('templateFileName', $arrayOfData);
 
 // in controller:
+// загрузка шаблона
 $view = Core::view('user/personal', array('userName'=> $user->name)); // загружает файл /views/user/personal.php, возвращает экземпляр класса View.
 
+// альтернативный способ передачи значений в шаблон
+$view->userAge = 25;
+
+// вывод шаблона
 print $view->render();
 //or
 $view->render(true);
 
 // in view:
-<div>Hello dier user <?=$userName?>!</div>
+<div>Hello dear <?=$userName?>! You are <?=$userAge?> years old.</div>
 
 	5.4 Использование модели:
 // in controller
+// загрузка модели
 $model = Core::model('users'); // загружает класс Users_Model из файла /models/users_model.php, возвращает экземпляр класса.
+// использование модели
 $userData = $model->getData($userId);
 
 // in model
-
 class Users_Model extends Model{
 	function getData($userId){
 		$sql = "SELECT * FROM `users` WHERE `id` = ?";
@@ -79,7 +87,7 @@ class Users_Model extends Model{
 - update ($sql, $options=null) - то же что и query(), но возвращает количестово измененных строк
 - delete ($sql, $options=null) - то же что и query(), но возвращает количестово измененных строк
 - insert ($sql, $options=null) - то же что и query(), но возвращает последний вставленный ID
-- do_query($sql, $options=null) - то же что и query(), но возвращает PDOSatement ( http://php.net/manual/en/class.pdostatement.php ).
-Возвращенный PDOSatement позволяет получить более широкий доступ к результатам запроса.
+- do_query($sql, $options=null) - то же что и query(), но возвращает PDOStatement ( http://php.net/manual/en/class.pdostatement.php ).
+Возвращенный PDOStatement позволяет получить более широкий доступ к результатам запроса (см. описание на php.net).
 
 
