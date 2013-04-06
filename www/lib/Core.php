@@ -63,6 +63,13 @@ class Core{
 		require_once($fname);
 	}
 
+	function loadModel($name){
+		$fname = DOC_ROOT. '/models/' . $name . '.php';
+		if(!file_exists($fname))
+			throw new Exception('No same model!');
+		require_once($fname);
+	}
+
 	function finish(){
 
 	}
@@ -80,7 +87,10 @@ class Core{
 	}
 
 	static function model($name){
-		return new Model(self::conf('db.connection.'.$name));
+		$class = ucfirst($name);
+		self::inst()->loadModel($name);
+		///$conf = self::conf('db.model_conn.'.$name); // only for specific models
+		return new $class ();
 	}
 
 }

@@ -24,4 +24,5 @@ function p($data){
 
 function ilog($msg){
 	// doing something
+	p($msg);
 }

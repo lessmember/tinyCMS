@@ -8,7 +8,7 @@ class MysqlDriver extends PDO {
 		$dns = "mysql:dbname={$options['name']};host={$options['host']}";
 		if (isset($options['port']))
 			$dns .= ";port={$options['port']}";
-		parent::__construct($dns, $options['user'], $options['password']);
+		parent::__construct($dns, $options['login'], $options['password']);
 	}
 
 	function do_query($sql, $data=null){
