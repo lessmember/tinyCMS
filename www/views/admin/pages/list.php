@@ -15,11 +15,19 @@
 	table.tax-list{
 		border: 1px solid;
 	}
+	table.tax-list tr th:nth-child(1),table.tax-list tr td:nth-child(1)  {
+		width: 200px;
+	}
+	table.tax-list tr td:nth-child(1) a{
+		text-decoration: none;
+		display: inline-block;
+		width: 100%;
+	}
 	table.tax-list tr th {
-		background-color: #e0e0e0;
+		background-color: #ffffff;
 	}
 	table.tax-list tr:nth-child(even) td{
-		background-color: #f8f8a0;
+		background-color: #f0f0f0;
 	}
 
 	div#add-sub-panel{
@@ -56,7 +64,7 @@
 <table id="skeleton">
 	<tr>
 		<td>
-			<table class="tax-list" style="min-width: 600px;" border="1" >
+			<table class="tax-list" style="min-width: 300px;" border="1" >
 				<tr>
 					<th>
 						Name
@@ -87,7 +95,8 @@
 					<td><?=$page->title?></td>
 					<td>
 						<a class="text-btn edit-btn" href="/<?=(tpl::url('admin', 'page', array('edit', 'form')))?>" id="edit-<?=$page->id?>">edit</a>
-						<a class="text-btn del-btn" id="del-<?=$page->id?>">remove node</a>
+						<a class="text-btn edit-btn" href="/<?=(tpl::url('admin', 'page', array('view')))?>" id="view-<?=$page->id?>">view</a>
+						<a class="text-btn del-btn" id="del-<?=$page->id?>">delete</a>
 					</td>
 				</tr>
 				<?endforeach?>

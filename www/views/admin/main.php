@@ -28,6 +28,7 @@
 			min-width: 30px;
 			border: 1px solid;
 			cursor: pointer;
+			text-decoration: none;
 		}
 		div#top-menu{
 			background-color: #eee;
