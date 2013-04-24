@@ -1,0 +1,97 @@
+<style>
+	table#skeleton tr td{
+		vertical-align: top;;
+	}
+	table.page-list{
+		border: 1px solid;
+	}
+	table.page-list tr th {
+		background-color: #f0f0f0;
+	}
+	table.page-list tr:nth-child(even) td{
+		background-color: #f0f8f0;
+	}
+
+	table.tax-list{
+		border: 1px solid;
+	}
+	table.tax-list tr th {
+		background-color: #e0e0e0;
+	}
+	table.tax-list tr:nth-child(even) td{
+		background-color: #f8f8a0;
+	}
+
+	div#add-sub-panel{
+		position: absolute;
+		background-color: #fff;
+		border: 1px solid #eee;
+		display: none;
+		width: 400px;
+		height: 150px;
+	}
+	div#add-sub-panel input[type="text"]{
+		width: 350px;
+		margin: 15px 25px 15px 25px;
+	}
+	div#add-sub-panel button{
+		width: 100px;
+		margin: 0 25px 0 25px;
+	}
+	table.tax-list tr.tax-current td{
+		background-color: #fee;
+	}
+	table.tax-list tr.tax-current td:nth-child(1){
+		font-weight: bold;
+	}
+	table.tax-list tr td:nth-child(1){
+		padding-left: 5px;
+	}
+</style>
+
+<script type="text/javascript">
+
+</script>
+
+<table id="skeleton">
+	<tr>
+		<td>
+			<table class="tax-list" style="min-width: 600px;" border="1" >
+				<tr>
+					<th>
+						Name
+					</th>
+					<th>Actions</th>
+				</tr>
+				<?foreach($sections as $sec):?>
+				<tr  class="<?=($sec->id == $current->id ? 'tax-current' : '')?>">
+					<td><a href="/<?=(tpl::url('admin', 'pages', array($sec->id)))?>"><?=$sec->name?></a></td>
+					<td>
+						<a class="text-btn edit-btn" href="/<?=(tpl::url('admin', 'page', array('create', 'form', 'parent' => $sec->id)))?>">add page</a>
+						<a class="text-btn add-sub-btn" id="add-page-<?=$sec->id?>"><?=$sec->id?></a>
+					</td>
+				</tr>
+				<?endforeach?>
+			</table>
+		</td>
+		<td>
+			<table class="page-list" style="min-width: 600px;" border="1" >
+				<tr>
+					<th>
+						Name
+					</th>
+					<th>Actions</th>
+				</tr>
+				<?foreach($pages as $page):?>
+				<tr>
+					<td><?=$page->title?></td>
+					<td>
+						<a class="text-btn edit-btn" href="/<?=(tpl::url('admin', 'page', array('edit', 'form')))?>" id="edit-<?=$page->id?>">edit</a>
+						<a class="text-btn del-btn" id="del-<?=$page->id?>">remove node</a>
+					</td>
+				</tr>
+				<?endforeach?>
+			</table>
+		</td>
+	</tr>
+</table>

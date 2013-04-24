@@ -26,11 +26,12 @@ class Login extends Controller{
 	 * @param null $msg
 	 */
 	function form($msg = null){
-	//	$ref = Core::context()->referer;
-		$ref = get('redirect');
-		/*if ($ref AND strpos($ref, Core::conf('host.name'))){
+		/*$ref = Core::context()->referer;
+		if ($ref AND strpos($ref, Core::conf('host.name'))){
 			Session::set('referer', $ref);
 		}*/
+
+		$ref = get('redirect');
 		if($ref)
 			Session::set('referer', urldecode($ref));
 

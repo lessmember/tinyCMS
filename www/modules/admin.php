@@ -98,15 +98,35 @@ class Admin extends Controller {
 		$model = Core::model('taxonomy');}
 
 
-	function pages($parentId=null){
-		$model = Core::model('pages');
-	}
-
 	function page($action, $step='form'){
 		if(!$this->validateAction($action, $step)){
 			die('Incorrect action');
 		}
 		$fun = $this->methodName('taxonomy', $action, $step);
+	}
+
+	function pages($parentId=null){
+		if(!$parentId)
+			$parentId = 1;
+
+		$pmodel = Core::model('pages');
+		$pdata = $pmodel->byParent($parentId);
+
+		$tmodel = Core::model('taxonomy');
+		$parent = $tmodel->infoById($parentId);
+		$tlist = $tmodel->all();
+
+		$content = Core::view('admin/pages/list', array(
+			'pages'		=> $pdata,
+			'sections'	=> $tlist,
+			'current'		=> $parent
+		))->render();
+
+		Core::view('admin/main',
+			array(
+				'title'		=> 'pages',
+				'content'	=> $content
+			))->render(1);
 	}
 
 	private function pageCreateForm(){
@@ -126,6 +146,10 @@ class Admin extends Controller {
 	private function pageEditRecord(){
 
 		$model = Core::model('pages');
+	}
+
+	function users(){
+
 	}
 
 }

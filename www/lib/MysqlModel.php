@@ -62,6 +62,13 @@ abstract class MysqlModel{
 		return $this->updateByCon($data, array('query' => '`id` = ?', 'data' => array($id)));
 	}
 
+	function infoById($id){
+		$fields = $this->fieldList();
+		return $this->db->selectOne("SELECT {$fields} FROM `{$this->table}` WHERE `id` = ? ;", array($id));
+	}
+
+
+
 	function timeRandom($length = 64){
 		return substr(
 			str_replace(array(' ', '.'), array('_', '_'), microtime(1))
@@ -70,8 +77,6 @@ abstract class MysqlModel{
 			) ,
 			0, $length);
 	}
-
-
 
 	/**
 	 * Making html table by 2D array

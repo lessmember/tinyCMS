@@ -56,11 +56,6 @@ class Users extends MysqlModel{
 		return $this->db->selectOne("SELECT {$fields} FROM `{$this->table}` WHERE `hash` = ? ;", array($hash));
 	}
 
-	function infoById($id){
-		$fields = $this->fieldList();
-		return $this->db->selectOne("SELECT {$fields} FROM `{$this->table}` WHERE `id` = ? ;", array($id));
-	}
-
 	private function hashPass($pass, $len=64){
 		return substr (hash_hmac('sha512', $pass, $this->secureKey), 0, $len);
 	}
