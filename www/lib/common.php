@@ -12,6 +12,10 @@ function post($name){
 	return arrval($_POST, $name);
 }
 
+function cookie($name){
+	return arrval($_COOKIE, $name);
+}
+
 function p($data){
 	print "<pre>\n";
 	if(is_array($data) OR is_object($data)){

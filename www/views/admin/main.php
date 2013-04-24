@@ -26,7 +26,7 @@
 			cursor: pointer;
 		}
 	</style>
-	<script type="text/javascript" src="/media/scripts/jquery-1.7.2.min.js" ></script>
+	<script type="text/javascript" src="/media/scripts/jquery-1.9.1.min.js" ></script>
 	<script type="text/javascript" src="/media/scripts/common.js" ></script>
 </header>
 <body>

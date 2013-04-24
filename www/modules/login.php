@@ -3,9 +3,10 @@
 class Login extends Controller{
 
 	private $pregRules = array(
-		'login' => '#^[\w]{3,12}$#',
-		'password' => '#^[\w\!\.\,\+\=\-]+$#',
-		'email' => '#^[\w\-\.]+@(?:[\w\-]+\.){1,3}[a-z]{2,4}$#'
+		'login'		=> '#^[\w]{3,12}$#',
+		'password'	=> '#^[\w\!\.\,\+\=\-]+$#',
+		'email'		=> '#^[\w\-\.]+@(?:[\w\-]+\.){1,3}[a-z]{2,4}$#',
+		'hash'		=> '#^[a-z0-9\_]+$#'
 	);
 
 	function __construct(){
@@ -19,6 +20,11 @@ class Login extends Controller{
 		$this->form();
 	}
 
+	/**
+	 * Check hash and show form if no hash
+	 *
+	 * @param null $msg
+	 */
 	function form($msg = null){
 	//	$ref = Core::context()->referer;
 		$ref = get('redirect');
@@ -27,11 +33,28 @@ class Login extends Controller{
 		}*/
 		if($ref)
 			Session::set('referer', urldecode($ref));
+
+		// Checking cookie
+		$userData = $this->checkHash();
+		if($userData){
+			return $this->initUser($userData);
+		}
+
 		Core::view('login/form', array(
 			'action'	=> tpl::url('login', 'check', array()),
 			'msg'		=> $msg
 		))->render(1);
 	//	p($_SESSION);
+	}
+
+	function checkHash(){
+		$hash = cookie('user_hash');
+		if(!$hash OR !preg_match($this->pregRules['hash'], $hash)){
+			return false;
+		}
+		$model = Core::model('users');
+		$data = $model->checkHash($hash);
+		return $data;
 	}
 
 	function check(){
@@ -47,17 +70,21 @@ class Login extends Controller{
 			sleep(1);
 			return $this->form('Invalid login or password');
 		}
+		$this->initUser($data);
+	}
 
+	/**
+	 * Init user instance in session and redirect
+	 * @param $data
+	 */
+	private function initUser($data){
 		$ref = Session::get('referer');
+		//
 		Session::clear();
-
-		// Init user instance in session
 		Session::set('user', $data);
 		setcookie('user_hash', $data->hash, time() + Core::conf('auth.cookie.period'), '/', Core::conf('host.name'));
-
 		if(!$ref)
 			$ref = tpl::fullUrl();
-	//	p($_SESSION);
 		return header('location: ' . $ref);
 	}
 
