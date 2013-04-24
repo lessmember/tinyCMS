@@ -9,6 +9,11 @@ $config = array(
 
 	'paramsName' => 'option',
 
+	'host.name'		=>	'tinycms.loc',
+	'page.protocol'	=>	'http',
+
+	'auth.cookie.period'	=> 24*60*60*14,
+
 	'db.connection.default' => array(
 		'name' => 'tinycms',
 		'login' => 'devadmin',

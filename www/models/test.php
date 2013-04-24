@@ -2,7 +2,8 @@
 
 class Test extends MysqlModel {
 
-	private $table = 'test_users';
+	protected $table = 'test_users';
+
 	function createTable(){
 		$this->db->query("CREATE TABLE IF NOT EXISTS `{$this->table}` (
 			`id` int(11) unsigned NOT NULL AUTO_INCREMENT,
@@ -20,14 +21,14 @@ class Test extends MysqlModel {
 	function fillTable(){
 		for ($i=0; $i<5; ++$i){
 			$sql = "INSERT INTO `{$this->table}` (`login`, `pass`, `email`) VALUES (?, ?, ?);";
-			p('inserted '.$this->db->insert($sql, array('user_'.$i, 'pass_'.str_repeat('z', $i), str_repeat(chr(97+$i), 5).'@mail.com')));
+			p('inserted[driver] '.$this->db->insert($sql, array('user_'.$i, 'pass_'.str_repeat('z', $i), str_repeat(chr(97+$i), 5).'@mail.com')));
 		}
 		for($i=5; $i<10; ++$i){
-			$this->insert($this->table, array(
+			p('inserted[model] '.$this->insert( array(
 				'login' => 'user_'.$i,
 				'pass'  => 'pass_'.str_repeat('z', $i),
 				'email' => str_repeat(chr(97+$i), 5).'@mail.com')
-			);
+			));
 		}
 	}
 

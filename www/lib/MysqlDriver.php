@@ -32,6 +32,14 @@ class MysqlDriver extends PDO {
 		return $stat->fetchAll(PDO::FETCH_CLASS);
 	}
 
+	function selectOne($sql, $options=null){
+	//	var_dump($sql);
+	//	var_dump($options);
+		$res = $this->select($sql, $options);
+	//	var_dump($res);
+		return empty($res) ? null: $res[0];
+	}
+
 	function insert($sql, $options){
 		$stat = $this->do_query($sql, $options);
 		return $this->lastInsertId();

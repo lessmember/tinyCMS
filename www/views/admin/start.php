@@ -1,0 +1,1 @@
+<a href="/<?=tpl::url('admin', 'taxonomy')?>">taxonomy list</a>

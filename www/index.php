@@ -32,4 +32,4 @@ if(get('global_logging_ram_usage')){
 		' ; usage memory different: '. ceil((GLOBAL_LOG_RAM_USAGE_END - GLOBAL_LOG_RAM_USAGE_START)/1024)  .' kBytes');
 }
 
-print '<br><br>-- end --';
+//print '<br><br>-- end --';

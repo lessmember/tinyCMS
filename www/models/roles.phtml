@@ -1,0 +1,24 @@
+<?php
+
+class Roles extends MysqlModel {
+
+	protected $table = 'roles';
+
+	// system, content, manage_content, comments, manage_comments, manage_users, taxonomy
+
+	function install(){
+		$this->db->query("CREATE TABLE IF NOT EXISTS `{$this->table}` (
+			`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+			`title` varchar(32) NOT NULL,
+			PRIMARY KEY (`id`)
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ; ");
+	}
+
+	function add($name){
+		return $this->insert(array('title' => $name));
+	}
+
+	function change(){}
+
+	function remove(){}
+}
