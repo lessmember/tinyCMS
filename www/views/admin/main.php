@@ -11,6 +11,10 @@
 			width: 180px;
 			padding-left: 10px;
 		}
+		form div textarea{
+			width: 800px;
+			height: 600px;
+		}
 		form span.warning{
 			color: red;
 		}

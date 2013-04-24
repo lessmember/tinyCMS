@@ -102,7 +102,9 @@ class Admin extends Controller {
 		if(!$this->validateAction($action, $step)){
 			die('Incorrect action');
 		}
-		$fun = $this->methodName('taxonomy', $action, $step);
+		$fun = $this->methodName('page', $action, $step);
+
+		$this->$fun();
 	}
 
 	function pages($parentId=null){
@@ -129,13 +131,66 @@ class Admin extends Controller {
 			))->render(1);
 	}
 
-	private function pageCreateForm(){
+	private function pageCreateForm($formData=null, $warnings=null){
+		$parent = !$formData ? intval(get('parent')) : $formData['parent'];
 
+		$formData = array();
+		$content = Core::view('admin/pages/create.form', array(
+			'action'	=>	tpl::url('admin', 'page', array('create', 'record')),
+			'parent'	=>	$parent,
+			'formData'	=>	$formData,
+			'warnings'	=> $warnings
+		))->render();
+
+		Core::view('admin/main',
+			array(
+				'title'		=> 'add page',
+				'content'	=> $content
+			))->render(1);
 	}
 
 	private function pageCreateRecord(){
+		$title = post('title');
+		$urlName = post('url_name');
+		$content = post('page_content');
+		$parentId = intval(post('parent'));
+		//check data
+		$warnings = array();
+		$valid = true;
 
+		if(!$title){
+			$warnings['title'] = 'Empty name.';
+			$valid = false;
+		}else if($title AND !preg_match('#^[\w .,;:/()\#]+$#', $title)){
+			$warnings['title'] = 'Invalid character set.';
+			$valid = false;
+		}
+		if(!$urlName){
+			$warnings['url_name'] = 'Empty name.';
+			$valid = false;
+		}else if(!preg_match('#^[\w\-]+$#', $urlName)){
+			$warnings['url_name'] = 'Invalid character set.';
+			$valid = false;
+		}
+
+		if(!$valid){
+			$formData = array();
+			foreach(array('title', 'url_name', 'page_content', 'parent') as $name){
+				$formData[$name] = post($name);
+			}
+			return $this->pageCreateForm(
+				$formData,
+				$warnings
+			);
+		}
 		$model = Core::model('pages');
+		$model->add(array(
+			'parent'	=>	$parentId,
+			'title'		=> $title,
+			'url_name'	=> $urlName,
+			'content'	=> $content
+		));
+		header('location: ' . tpl::fullUrl('admin', 'pages', array($parentId)));
 	}
 
 	private function pageEditForm(){
