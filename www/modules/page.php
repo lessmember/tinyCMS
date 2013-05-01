@@ -7,11 +7,15 @@ class Page extends Controller {
 	}
 
 	function content($id=null){
+	//	p($id);
 		if(!$id)
 			$id = Core::conf('default.page');
 		$field = $this->idName($id);
 		$model = Core::model('pages');
 		$pageData = $model->getBy($id, $field);
+		if(!$pageData){
+			return Core::controller('service')->page404(Core::context()->uri);
+		}
 		print tpl::html_table($pageData);
 
 		$taxModel = Core::model('taxonomy');

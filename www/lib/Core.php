@@ -96,6 +96,12 @@ class Core{
 		return new $class ();
 	}
 
+	static function controller($name){
+		Core::inst()->loadController($name);
+		$className = ucfirst($name);
+		return new $className();
+	}
+
 	static function extLib($name){
 		$extFiles = self::conf('ext.lib');
 		if(!isset($extFiles[$name]))
