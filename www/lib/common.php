@@ -28,5 +28,5 @@ function p($data){
 
 function ilog($msg){
 	// doing something
-	p($msg);
+	p("<span style='color: #800; font-weight: bold;'>$msg</span>");
 }

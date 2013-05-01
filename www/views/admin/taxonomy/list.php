@@ -1,12 +1,20 @@
 <style>
 	table.tax-list{
 		border: 1px solid;
+		padding:0;
+		border-spacing: 0;
 	}
 	table.tax-list tr th {
 		background-color: #e0e0e0;
 	}
 	table.tax-list tr:nth-child(even) td{
-		background-color: #f8f8a0;
+		background-color: #ffc;
+	}
+	table.tax-list tr:hover td{
+		background-color: #fea;
+	}
+	table.tax-list tr td{
+		border:0;
 	}
 	div#add-sub-panel{
 		position: absolute;
@@ -23,6 +31,29 @@
 	div#add-sub-panel button{
 		width: 100px;
 		margin: 0 25px 0 25px;
+	}
+	.text-btn{
+		border-color: #888;
+	}
+	.text-btn:hover{
+		background-color: #f88;
+	}
+	.rounded-block{
+		border: 1px solid #888;
+		background-color: #f80;
+		display: block;
+		float: left;
+		border-radius: 4px;
+		width: 16px;
+		height: 16px;
+		margin-right: 2px;
+	}
+	#tax-denorm-mode{
+		color: #88a;
+		font-size: 0.8em;
+	}
+	.clear{
+		clear:both;
 	}
 </style>
 
@@ -70,8 +101,31 @@
 			})
 		}
 	}
+	var taxOptimization = {
+		init: function(){
+			$('a#tax-denorm').click(function (){taxOptimization.run()});
+		},
+		run: function(){
+			$('#tax-denorm-mode').html('applying');
+			$.ajax({
+				type: 'post',
+				url:'<?=$denormSubUrl?>',
+				dataType:'json',
+				success: function(data){
+					log(data); taxOptimization.done(data)
+				},
+				error: function(data){log('error'); log(data)}
+			})
+		},
+		done: function(data){
+			if(data && data.success && typeof(data.changed) != 'undefined'){
+				$('#tax-denorm-mode').html('done, changed '+data.changed+' units');
+			}
+		}
+	}
 	$(window).load(function(){
 		subPanel.init();
+		taxOptimization.init();
 		$('.edit-btn').click(function(){
 			log('edit')
 			var id = this.id.substr('edit-'.length);
@@ -103,12 +157,19 @@
 	</tr>
 	<?foreach($sections as $sec):?>
 	<tr>
-		<td><?=$sec->name?></td>
+		<td><div style="margin-left: <?=($sec->deep * 20)?>px; padding-left: 4px;"><div class="rounded-block"></div> <?=$sec->name?></div><div class="clear"></div></td>
 		<td>
+			<span class="text-btn add-sub-btn" id="add-sub-<?=$sec->id?>">+ add sub node</span>
+			<?if($sec->id != 1):?>
 			<span class="text-btn edit-btn" id="edit-<?=$sec->id?>">edit</span>
-			<span class="text-btn add-sub-btn" id="add-sub-<?=$sec->id?>">add sub node</span>
-			<span class="text-btn del-btn" id="del-<?=$sec->id?>">remove node</span>
+			<span class="text-btn del-btn" id="del-<?=$sec->id?>">- remove node</span>
+			<?endif?>
 		</td>
 	</tr>
 		<?endforeach?>
 </table>
+
+<div class="gui-panel">
+	<a class="text-btn" id="tax-denorm" title="Speed optimization of treelike structure">Denormalize Taxonomy</a>
+	<span id="tax-denorm-mode"></span>
+</div>

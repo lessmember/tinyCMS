@@ -14,11 +14,18 @@ $config = array(
 
 	'auth.cookie.period'	=> 24*60*60*14,
 
+	'default.page'	=>	1,
+	'theme'			=> 'default',
+
 	'db.connection.default' => array(
 		'name' => 'tinycms',
 		'login' => 'devadmin',
 		'password' => '1',
 		'port' => '',
 		'host' => '127.0.0.1',
+	),
+
+	'ext.lib' => array(
+		'TaxonomyTree'		=>	DOC_ROOT . '/ext/TaxonomyTree.php'
 	)
 );

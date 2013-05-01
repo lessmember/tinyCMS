@@ -18,7 +18,7 @@ class Admin extends Controller {
 	}
 
 	private function validateAction($action, $step){
-		$validActions = array('list','create', 'edit', 'view');
+		$validActions = array('list','create', 'edit', 'view', 'denormalize');
 		$validSteps = array('form','record', 'view');
 		return (in_array($action, $validActions) AND in_array($step, $validSteps));
 	}
@@ -33,6 +33,7 @@ class Admin extends Controller {
 		if(!$this->validateAction($action, $step)){
 			die('Incorrect action');
 		}
+		Core::extLib('TaxonomyTree');
 		$fun = $this->methodName('taxonomy', $action, $step);
 		$this->$fun();
 	}
@@ -41,11 +42,13 @@ class Admin extends Controller {
 		// root id=0
 		$model = Core::model('taxonomy');
 		$data = $model->all();
+		$tax = new TaxonomyTree($data);
 		//p($data);
 		//print $model->html_table($data, "min-width: 600px;");
 		$codeList = Core::view('admin/taxonomy/list', array(
-			'sections' => $data,
-			'addSubUrl'	=> '/' . tpl::url('admin', 'taxonomy', array('create', 'record'))
+			'sections'		=> $tax->makeList(),
+			'addSubUrl'		=> '/' . tpl::url('admin', 'taxonomy', array('create', 'record')),
+			'denormSubUrl'	=> '/' . tpl::url('admin', 'taxonomy', array('denormalize', 'record'))
 		))->render();
 		Core::view('admin/main',
 			array(
@@ -95,15 +98,22 @@ class Admin extends Controller {
 	}
 
 	private function taxonomyEditRecord(){
-		$model = Core::model('taxonomy');}
+		$model = Core::model('taxonomy');
+	}
 
+	private function taxonomyDenormalizeRecord(){
+		$model = Core::model('taxonomy');
+		$updated = $model->denormalize();
+		$this->contentType('application/json');
+		return print (json_encode(array('success'=>true, 'changed'	=> $updated)));
+	}
 
 	function page($action, $step='form'){
 		if(!$this->validateAction($action, $step)){
 			die('Incorrect action');
 		}
+		Core::extLib('TaxonomyTree');
 		$fun = $this->methodName('page', $action, $step);
-
 		$this->$fun();
 	}
 
@@ -112,15 +122,17 @@ class Admin extends Controller {
 			$parentId = 1;
 
 		$pmodel = Core::model('pages');
-		$pdata = $pmodel->byParent($parentId);
+		$pdata = $pmodel->namesByParent($parentId);
 
 		$tmodel = Core::model('taxonomy');
 		$parent = $tmodel->infoById($parentId);
 		$tlist = $tmodel->all();
+		Core::extLib('TaxonomyTree');
+		$tax = new TaxonomyTree($tlist);
 
 		$content = Core::view('admin/pages/list', array(
 			'pages'		=> $pdata,
-			'sections'	=> $tlist,
+			'sections'	=> $tax->makeList(),
 			'current'		=> $parent
 		))->render();
 
@@ -200,6 +212,10 @@ class Admin extends Controller {
 
 	private function pageEditRecord(){
 
+		$model = Core::model('pages');
+	}
+
+	private function pagesDenormalizeRecord(){
 		$model = Core::model('pages');
 	}
 

@@ -9,6 +9,20 @@ class Test1{
 		print Core::view('test/test1',array('msg' => 'testing, action 1'))->render();
 	}
 
+	function taxo(){
+		$model = Core::model('taxonomy');
+		$data = $model->all();
+		print $model->html_table($data);
+		Core::extLib('TaxonomyTree');
+
+		$tax = new TaxonomyTree($data);
+	//	p($tax);
+		p('taxUnit counter = '.taxUnit::$counter);
+		$list = $tax->makeList();
+	//	p($list);
+		Core::view('test/taxo', array('list' => $list))->render(1);
+	}
+
 	function testdb(){
 		$this->index();
 		$model = Core::model('test');

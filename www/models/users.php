@@ -1,6 +1,6 @@
 <?php
 
-class Users extends MysqlModel{
+class UsersModel extends MysqlModel{
 
 	// common members
 	protected $table = 'users';

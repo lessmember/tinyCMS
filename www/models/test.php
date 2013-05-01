@@ -1,6 +1,6 @@
 <?php
 
-class Test extends MysqlModel {
+class TestModel extends MysqlModel {
 
 	protected $table = 'test_users';
 

@@ -53,5 +53,8 @@ class View {
 			print $this->html;
 		return $this->html;
 	}
+	protected function print_val($name){
+		print arrval($this->data, $name);
+	}
 
 }

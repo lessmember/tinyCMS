@@ -17,11 +17,13 @@ try{
 	Core::inst()->finish();
 } catch(Exception $e){
 	print 'Sorry, some troubles happened. Check the url or try later.';
-	ilog($e->getMessage());
+	ilog('Exception! '.$e->getMessage());
 }
 define('GLOBAL_LOG_TIME_END', microtime(true));
 define('GLOBAL_LOG_RAM_USAGE_END', memory_get_usage());
 
+// use in $_GET for global stats:
+// &global_logging_full_exec_time=1&global_logging_ram_usage=1
 if(get('global_logging_full_exec_time')){
 	p('exec_time = ' . (GLOBAL_LOG_TIME_END - GLOBAL_LOG_TIME_START) . ' sec');
 }

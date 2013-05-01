@@ -14,14 +14,22 @@
 
 	table.tax-list{
 		border: 1px solid;
+		border-spacing: 0;
+		border-collapse: collapse;
 	}
 	table.tax-list tr th:nth-child(1),table.tax-list tr td:nth-child(1)  {
 		width: 200px;
+		padding:0;
+		border-spacing: 0;
 	}
 	table.tax-list tr td:nth-child(1) a{
 		text-decoration: none;
-		display: inline-block;
+		display: block;
 		width: 100%;
+		height: 26px;
+	}
+	table.tax-list tr td a:hover{
+		background-color: #fee;
 	}
 	table.tax-list tr th {
 		background-color: #ffffff;
@@ -53,7 +61,7 @@
 		font-weight: bold;
 	}
 	table.tax-list tr td:nth-child(1){
-		padding-left: 5px;
+		border-spacing: 0;
 	}
 </style>
 
@@ -73,10 +81,18 @@
 				</tr>
 				<?foreach($sections as $sec):?>
 				<tr  class="<?=($sec->id == $current->id ? 'tax-current' : '')?>">
-					<td><a href="/<?=(tpl::url('admin', 'pages', array($sec->id)))?>"><?=$sec->name?></a></td>
 					<td>
+						<a href="/<?=(tpl::url('admin', 'pages', array($sec->id)))?>">
+						<span style="margin-left: <?=($sec->deep * 20 + 4)?>px;" >
+							|-<?=$sec->name?>
+						</span>
+						</a>
+					</td>
+					<td>
+						<?if($sec->id != 1):?>
 						<a class="text-btn edit-btn" href="/<?=(tpl::url('admin', 'page', array('create', 'form', 'parent' => $sec->id)))?>">add page</a>
 						<a class="text-btn add-sub-btn" id="add-page-<?=$sec->id?>"><?=$sec->id?></a>
+						<?endif?>
 					</td>
 				</tr>
 				<?endforeach?>

@@ -1,13 +1,13 @@
 <?php
 
-class Pages extends MysqlModel{
+class PagesModel extends MysqlModel{
 	protected $table = 'pages';
 	protected $insertFields = array('parent', 'title', 'url_name', 'content');
 
-	function byParent($parent){
+	function namesByParent($parent){
 		if(!$parent)
 			return array();
-		return $this->db->select("SELECT * FROM `$this->table` WHERE `parent` =? ", array($parent));
+		return $this->db->select("SELECT `id`, `title`, `url_name` FROM `$this->table` WHERE `parent` =? ", array($parent));
 	}
 
 	function add($data){
@@ -17,6 +17,12 @@ class Pages extends MysqlModel{
 			}
 		}
 		return $this->insert($data);
+	}
+
+	function getBy($index, $field='id'){
+		if(!in_array($field, array('id', 'url_name')))
+			throw new Exception('pages model: incorrect identifier name');
+		return $this->db->selectOne("SELECT * FROM `{$this->table}` WHERE `$field` = ? ", array($index));
 	}
 
 }

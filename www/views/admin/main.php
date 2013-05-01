@@ -29,6 +29,7 @@
 			border: 1px solid;
 			cursor: pointer;
 			text-decoration: none;
+			border-radius: 5px;;
 		}
 		div#top-menu{
 			background-color: #eee;
@@ -51,6 +52,9 @@
 		div#top-menu a:hover{
 			background-color: #ecc;
 		}
+		.gui-panel{
+			margin-top: 4px;
+		}
 	</style>
 	<script type="text/javascript" src="/media/scripts/jquery-1.9.1.min.js" ></script>
 	<script type="text/javascript" src="/media/scripts/common.js" ></script>
@@ -60,6 +64,7 @@
 	<a href="/<?=tpl::url('admin', 'taxonomy')?>">taxonomy</a>
 	<a href="/<?=tpl::url('admin', 'pages')?>">pages</a>
 	<a href="/<?=tpl::url('admin', 'users')?>">users</a>
+	<a href="/<?=tpl::url('admin', 'themes')?>">themes</a>
 </div>
 <h3><?=$title?></h3>
 <?=$content?>

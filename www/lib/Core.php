@@ -90,10 +90,20 @@ class Core{
 	}
 
 	static function model($name){
-		$class = ucfirst($name);
+		$class = ucfirst($name).'Model';
 		self::inst()->loadModel($name);
 		///$conf = self::conf('db.model_conn.'.$name); // only for specific models
 		return new $class ();
+	}
+
+	static function extLib($name){
+		$extFiles = self::conf('ext.lib');
+		if(!isset($extFiles[$name]))
+			throw new Exception('ext.lib: no config for lib');
+		$file = $extFiles[$name];
+		if(!file_exists($file))
+			throw new Exception('ext.lib: lib file not found');
+		require_once ($file);
 	}
 
 }
