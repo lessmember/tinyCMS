@@ -27,6 +27,7 @@ class Core{
 		$controllerName = $context->controller;
 		$method = $context->method;
 		$params = $context->params;
+	//	p($context);
 		try{
 			$this->loadController($controllerName);
 		}catch(Exception $e){

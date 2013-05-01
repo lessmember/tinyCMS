@@ -22,7 +22,8 @@ class PagesModel extends MysqlModel{
 	function getBy($index, $field='id'){
 		if(!in_array($field, array('id', 'url_name')))
 			throw new Exception('pages model: incorrect identifier name');
-		return $this->db->selectOne("SELECT * FROM `{$this->table}` WHERE `$field` = ? ", array($index));
+		$sql = "SELECT * FROM `{$this->table}` WHERE `$field` = ? ";
+		return $this->db->selectOne($sql, array($index));
 	}
 
 }

@@ -13,8 +13,9 @@ class Page extends Controller {
 		$field = $this->idName($id);
 		$model = Core::model('pages');
 		$pageData = $model->getBy($id, $field);
+	//	var_dump($pageData);
 		if(!$pageData){
-			return Core::controller('service')->page404(Core::context()->uri);
+			return Core::controller('service')->page404(Core::context()->uri, tpl::url('page', 'content' , array(Core::conf('default.page'))));
 		}
 		print tpl::html_table($pageData);
 
@@ -63,7 +64,7 @@ class Page extends Controller {
 	}
 
 	private function idName($id){
-		return preg_match('#\d+#', $id) ? 'id' : 'url_name';
+		return preg_match('#^\d+$#', $id) ? 'id' : 'url_name';
 	}
 
 	private function topMenu(){}
