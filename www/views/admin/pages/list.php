@@ -102,12 +102,16 @@
 			<table class="page-list" style="min-width: 600px;" border="1" >
 				<tr>
 					<th>
+						ID
+					</th>
+					<th>
 						Name
 					</th>
 					<th>Actions</th>
 				</tr>
 				<?foreach($pages as $page):?>
 				<tr>
+					<td><?=$page->id?></td>
 					<td><?=$page->title?></td>
 					<td>
 						<a class="text-btn edit-btn" href="/<?=(tpl::url('admin', 'page', array('edit', 'form')))?>" id="edit-<?=$page->id?>">edit</a>

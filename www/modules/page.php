@@ -21,8 +21,8 @@ class Page extends Controller {
 		$contextData = $model->namesByParent($pageData->parent);
 		print tpl::html_table($contextData);
 
-		$cascadeData = array();
-
+		$cascadeData = $taxModel->namesByChain($parentData->parent_id_chain);
+		$cascadeData[] = $parentData;
 		$theme = 'default';
 		$viewDir = 'themes/'.$theme.'/';
 
@@ -33,7 +33,7 @@ class Page extends Controller {
 			'content'	=> Core::view( $this->currentThemeUnit($theme, 'content'), array('content' => $pageData->content))->render(),
 			'topMenu'	=> Core::view( $this->currentThemeUnit($theme, 'menu') )->render(),
 			'contextMenu'	=> Core::view( $this->currentThemeUnit($theme, 'context-menu'), array('pages' => $contextData))->render(),
-			'cascadeMenu'	=> Core::view( $this->currentThemeUnit($theme, 'cascade-menu'), array('units' => $cascadeData))->render(),
+			'cascadeMenu'	=> Core::view( $this->currentThemeUnit($theme, 'cascade-menu'), array('units' => $cascadeData, ))->render(),
 			'stat'			=> 'generated in ' . ( round(10000*(microtime(true) - GLOBAL_LOG_TIME_START))/10000 ) . ' sec'
 		))->render(1);
 	}
