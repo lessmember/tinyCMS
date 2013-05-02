@@ -6,6 +6,31 @@
 	<script type="text/javascript" src="/media/scripts/jquery-1.9.1.min.js" ></script>
 	<script type="text/javascript" src="/media/scripts/common.js" ></script>
 	<style type="text/css">
+		html,body{
+			margin:0;
+			padding:0;
+		}
+		.head{
+			background-color: #000;
+			color: #fff;
+			font-size: 20px;
+			font-family: Arial;
+		}
+		.top-menu{
+			padding:0;
+		}
+		.top-menu a{
+			display: inline-block;
+			border: 1px solid #aaa;
+			background-color: #eee;
+			color: #448;
+			text-decoration: none;
+			margin-left: 4px;
+			padding:0px 4px 0px 4px;
+		}
+		.top-menu a:hover{
+			background-color: #eef;
+		}
 	td.context-menu a{
 		display:block;
 		width: 192px;
@@ -24,6 +49,9 @@
 	td.context-menu a:hover{
 		background-color: #eaa;
 	}
+	.cascade-menu a{
+		text-decoration: none;
+	}
 	td.content{
 		padding: 10px;
 	}
@@ -38,11 +66,12 @@
 	</style>
 </header>
 <body>
-<div id="top-menu">
+<div class="head">This a tiny and simple handmade CMS</div>
+<div class="top-menu">
 	<?=$topMenu?>
 </div>
 <div><a href="/<?(tpl::url('login'))?>"></a></div>
-<div id="cascade-menu">
+<div class="cascade-menu">
 	<?=$cascadeMenu?>
 </div>
 <h3><?=$title?></h3>

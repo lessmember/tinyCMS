@@ -7,7 +7,7 @@ class PagesModel extends MysqlModel{
 	function namesByParent($parent){
 		if(!$parent)
 			return array();
-		return $this->db->select("SELECT `id`, `title`, `url_name` FROM `$this->table` WHERE `parent` =? ", array($parent));
+		return $this->db->select("SELECT `id`, `title`, `url_name` FROM `$this->table` WHERE `parent` = ? ", array($parent));
 	}
 
 	function add($data){
