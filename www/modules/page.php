@@ -22,7 +22,8 @@ class Page extends Controller {
 			'topMenu'	=> Core::view( $this->currentThemeUnit('menu'), array('units'	=> $data->topMenu) )->render(),
 			'contextMenu'	=> Core::view( $this->currentThemeUnit('context-menu'), array(
 					'pages' => $data->contextMenu,
-					'isSection' => $data->isSection
+					'isSection' => $data->isSection,
+					'current'		=> $data->current
 				))->render(),
 			'cascadeMenu'		=> Core::view( $this->currentThemeUnit('cascade-menu'), array(
 					'units' 	=> $data->cascadeMenu,
@@ -72,6 +73,7 @@ class Page extends Controller {
 
 		$data = array(
 			'title'			=> $pageData->title,
+			'current'		=> $pageData,
 			'content'		=> $pageData->content,
 			'topMenu'		=> $topMenuData,
 			'contextMenu'	=> $contextData,
@@ -137,6 +139,7 @@ class Page extends Controller {
 
 		$data = array(
 			'title'			=> $curData->title,
+			'current'		=> $curData,
 			'content'		=> $content,
 			'topMenu'		=> $topMenuData,
 			'contextMenu'	=> $contextData,

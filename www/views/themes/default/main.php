@@ -52,6 +52,11 @@
 	td.context-menu a:hover{
 		background-color: #eaa;
 	}
+	td.context-menu a.menu-cur{
+		background-color: #eee;
+		border-color: #aaa;
+		color: #444;
+	}
 	.cascade-menu a{
 		text-decoration: none;
 	}
