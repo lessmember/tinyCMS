@@ -2,16 +2,16 @@
 
 class TaxonomyModel extends MysqlModel{
 	protected $table = 'taxonomy';
-	protected $infoFields = array('id', 'parent', 'name', 'url_name', 'parent_id_chain');
+	protected $infoFields = array('id', 'parent', 'title', 'url_name', 'parent_id_chain');
 
 	function all(){
 		return $this->db->select("SELECT * FROM `{$this->table}` ORDER BY `parent`, `id` ");
 	}
 
-	function add($name, $urlName, $parent){
+	function add($title, $urlName, $parent){
 		return $this->insert(
 			array(
-				'name'		=> $name,
+				'title'		=> $title,
 				'url_name'	=> $urlName,
 				'parent'	=> $parent
 			));
@@ -20,15 +20,19 @@ class TaxonomyModel extends MysqlModel{
 	function namesByParent($parent){
 		if(!$parent)
 			return array();
-		return $this->db->select("SELECT `id`, `name`, `url_name` FROM `{$this->table}` WHERE `parent` =? ", array($parent));
+		return $this->db->select("SELECT `id`, `title`, `url_name` FROM `{$this->table}` WHERE `parent` =? ", array($parent));
 	}
 
 	function namesByChain($chain){
 		if(!preg_match('#(\d+\;)*\d#', $chain))
 			throw new Exception('taxonomy model: incorrect chain: '.$chain);
 		$ids = explode(';', $chain);
+		if(count($ids) < 2)
+			return array();
+		if( intval($ids[0] == 1))
+			array_shift($ids);
 		$mask = substr(str_repeat('?,', count($ids)), 0, -1);
-		$sql = "SELECT `id`, `name`, `url_name`, `parent_id_chain` FROM `{$this->table}` WHERE `id` IN ({$mask}) ";
+		$sql = "SELECT `id`, `title`, `url_name`, `parent_id_chain` FROM `{$this->table}` WHERE `id` IN ({$mask}) ";
 		return $this->db->select($sql, $ids);
 	}
 
@@ -53,6 +57,13 @@ class TaxonomyModel extends MysqlModel{
 			$updated += $this->updateById(array('parent_id_chain' => $chain), $id);
 		}
 		return $updated;
+	}
+
+	function getBy($index, $field='id'){
+		if(!in_array($field, array('id', 'url_name')))
+			throw new Exception('pages model: incorrect identifier name');
+		$sql = "SELECT * FROM `{$this->table}` WHERE `$field` = ? ";
+		return $this->db->selectOne($sql, array($index));
 	}
 
 }

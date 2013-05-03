@@ -84,7 +84,7 @@
 					<td>
 						<a href="/<?=(tpl::url('admin', 'pages', array($sec->id)))?>">
 						<span style="margin-left: <?=($sec->deep * 20 + 4)?>px;" >
-							|-<?=$sec->name?>
+							|-<?=$sec->title?>
 						</span>
 						</a>
 					</td>

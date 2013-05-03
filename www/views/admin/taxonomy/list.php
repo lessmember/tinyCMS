@@ -157,7 +157,7 @@
 	</tr>
 	<?foreach($sections as $sec):?>
 	<tr>
-		<td><div style="margin-left: <?=($sec->deep * 20)?>px; padding-left: 4px;"><div class="rounded-block"></div> <?=$sec->name?></div><div class="clear"></div></td>
+		<td><div style="margin-left: <?=($sec->deep * 20)?>px; padding-left: 4px;"><div class="rounded-block"></div> <?=$sec->title?></div><div class="clear"></div></td>
 		<td>
 			<span class="text-btn add-sub-btn" id="add-sub-<?=$sec->id?>">+ add sub node</span>
 			<?if($sec->id != 1):?>

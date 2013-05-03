@@ -2,50 +2,7 @@
 
 class Page extends Controller {
 
-	function index(){
-		return $this->content(Core::conf('default.page')); //TODO: move to DB, add DB part of config to Core
-	}
-
-	function content($id=null){
-	//	p($id);
-		if(!$id)
-			$id = Core::conf('default.page');
-		$field = $this->idName($id);
-		$model = Core::model('pages');
-		$pageData = $model->getBy($id, $field);
-	//	var_dump($pageData);
-		if(!$pageData){
-			return Core::controller('service')->page404(Core::context()->uri, tpl::url('page', 'content' , array(Core::conf('default.page'))));
-		}
-		print tpl::html_table($pageData);
-
-		$taxModel = Core::model('taxonomy');
-		$parentData = $taxModel->infoById($pageData->parent);
-		print tpl::html_table($parentData);
-
-		$contextData = $model->namesByParent($pageData->parent);
-		print tpl::html_table($contextData);
-
-		$cascadeData = $taxModel->namesByChain($parentData->parent_id_chain);
-		$cascadeData[] = $parentData;
-
-		$topMenuData = $taxModel->namesByParent(1); // id of root
-		tpl::html_table($topMenuData);
-
-		$theme = 'default';
-		$viewDir = 'themes/'.$theme.'/';
-
-		//$topMenu = Core::view($viewDir.'/menu');
-
-		Core::view($viewDir.'main', array(
-			'title'		=> $pageData->title,
-			'content'	=> Core::view( $this->currentThemeUnit($theme, 'content'), array('content' => $pageData->content))->render(),
-			'topMenu'	=> Core::view( $this->currentThemeUnit($theme, 'menu'), array('units'	=> $topMenuData) )->render(),
-			'contextMenu'	=> Core::view( $this->currentThemeUnit($theme, 'context-menu'), array('pages' => $contextData))->render(),
-			'cascadeMenu'	=> Core::view( $this->currentThemeUnit($theme, 'cascade-menu'), array('units' => $cascadeData, ))->render(),
-			'stat'			=> 'generated in ' . ( round(10000*(microtime(true) - GLOBAL_LOG_TIME_START))/10000 ) . ' sec'
-		))->render(1);
-	}
+	private $pageType = 'common_page';
 
 	private $themeOptions = array(
 		'name'		=> 'default',
@@ -54,17 +11,153 @@ class Page extends Controller {
 		)
 	);
 
-	private function currentThemeUnit($theme, $unit){
-		$theme = (isset($this->themeOptions['units'][$unit])) ? $theme : 'default';
-		return 'themes/'.$theme . '/' . $unit;
+	function index(){
+		return $this->content(Core::conf('default.page')); //TODO: move to DB, add DB part of config to Core
 	}
 
-	function section($id){
-		if(preg_match('#\d+#', $id)){
-			// search by id
-		} else {
-			//search by url_name
+	private function build($data){
+		Core::view($this->currentThemeUnit('main'), array(
+			'title'		=> $data->title,
+			'content'	=> Core::view( $this->currentThemeUnit('content'), array('content' => $data->content))->render(),
+			'topMenu'	=> Core::view( $this->currentThemeUnit('menu'), array('units'	=> $data->topMenu) )->render(),
+			'contextMenu'	=> Core::view( $this->currentThemeUnit('context-menu'), array(
+					'pages' => $data->contextMenu,
+					'isSection' => $data->isSection
+				))->render(),
+			'cascadeMenu'		=> Core::view( $this->currentThemeUnit('cascade-menu'), array(
+					'units' 	=> $data->cascadeMenu,
+					'mainTitle'	=> 'Main'
+				))->render(),
+			'stat'			=> 'generated in ' . ( round(10000*(microtime(true) - GLOBAL_LOG_TIME_START))/10000 ) . ' sec',
+			'isSection'		=> $data->isSection
+		))->render(1);
+	}
+
+	function content($id=null){
+	//	p($id);
+		if(!$id)
+			$id = Core::conf('default.page');
+		$field = $this->idName($id);
+
+		$isSection = $this->pageType == 'section';
+
+		$model = Core::model('pages');
+		$pageData = $model->getBy($id, $field);
+	//	var_dump($pageData);
+		if(!$pageData){
+			return Core::controller('service')->page404(Core::context()->uri);//, tpl::url('page', 'content' , array(Core::conf('default.page'))));
 		}
+	//	print tpl::html_table($pageData);
+
+		$parentId = $pageData->parent;
+
+
+		$taxModel = Core::model('taxonomy');
+		$parentData = $taxModel->infoById($parentId);
+	//	print tpl::html_table($parentData);
+
+		// context menu
+		$contextModel = $isSection ? $taxModel : $model;
+		$contextData = $contextModel->namesByParent($parentId);
+	//	print tpl::html_table($contextData);
+
+		// cascade menu
+		$cascadeData = $taxModel->namesByChain($parentData->parent_id_chain);
+		$cascadeData[] = $parentData;
+
+		// top menu
+		$topMenuData = $taxModel->namesByParent(1); // id of root
+	//	tpl::html_table($topMenuData);
+
+
+		$data = array(
+			'title'			=> $pageData->title,
+			'content'		=> $pageData->content,
+			'topMenu'		=> $topMenuData,
+			'contextMenu'	=> $contextData,
+			'cascadeMenu'	=> $cascadeData,
+			'isSection'		=> false
+		);
+
+		return $this->build((object) $data);
+
+/*
+		Core::view($this->currentThemeUnit( 'main'), array(
+			'title'		=> $pageData->title,
+			'content'	=> Core::view( $this->currentThemeUnit( 'content'), array('content' => $pageData->content))->render(),
+			'topMenu'	=> Core::view( $this->currentThemeUnit( 'menu'), array('units'	=> $topMenuData) )->render(),
+			'contextMenu'	=> Core::view( $this->currentThemeUnit( 'context-menu'), array('pages' => $contextData))->render(),
+			'cascadeMenu'	=> Core::view( $this->currentThemeUnit( 'cascade-menu'), array('units' => $cascadeData, ))->render(),
+			'stat'			=> 'generated in ' . ( round(10000*(microtime(true) - GLOBAL_LOG_TIME_START))/10000 ) . ' sec',
+			'isSection'		=> $isSection
+		))->render(1);
+*/
+	}
+
+	function section($id=1){
+		$this->pageType = 'section';
+		$field = $this->idName($id);
+
+		$model = Core::model('taxonomy');
+		$curData = $model->getBy($id, $field);
+		if(! $curData){
+			return Core::controller('service')->page404(Core::context()->uri);//, tpl::url('page', 'content' , array(Core::conf('default.page'))));
+		}
+
+		//*************
+
+
+		$parentId = $curData->parent;
+
+		$parentData = $model->infoById($parentId);
+	//	print tpl::html_table($parentData);
+
+		// context menu
+		$contextData = $model->namesByParent($parentId);
+	//	print tpl::html_table($contextData);
+
+		// cascade menu
+		$cascadeData = $model->namesByChain($parentData->parent_id_chain);
+		$cascadeData[] = $parentData;
+
+		// top menu
+		$topMenuData = $model->namesByParent(1); // id of root
+	//	tpl::html_table($topMenuData);
+		//*************
+
+		$subSections = $model->namesByParent($curData->id);
+
+		$pageModel = Core::model('pages');
+		$pagesData = $pageModel->contentByParent($curData->id);
+
+		$content = Core::view($this->currentThemeUnit('section-content'), array(
+			'subSections'	=> $subSections,
+			'subPages'		=> $pagesData
+		))->render();
+
+		$data = array(
+			'title'			=> $curData->title,
+			'content'		=> $content,
+			'topMenu'		=> $topMenuData,
+			'contextMenu'	=> $contextData,
+			'cascadeMenu'	=> $cascadeData,
+			'isSection'		=> true
+		);
+
+		return $this->build( (object)  $data);
+	}
+
+	private function currentThemeUnit($unit){
+		$theme = 'default';
+		$useTheme = (isset($this->themeOptions['units'][$unit])) ? $theme : 'default';
+		return 'themes/'. $useTheme . '/' . $unit;
+	}
+
+	private function pageContent($pageId){
+
+	}
+
+	private function sectionContent($sectionId, $model){
 	}
 
 	private function idName($id){
@@ -82,7 +175,5 @@ class Page extends Controller {
 
 
 	}
-
-	private function pageContent(){}
 
 }

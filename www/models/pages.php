@@ -10,6 +10,12 @@ class PagesModel extends MysqlModel{
 		return $this->db->select("SELECT `id`, `title`, `url_name` FROM `$this->table` WHERE `parent` = ? ", array($parent));
 	}
 
+	function contentByParent($parent){
+		if(!$parent)
+			return array();
+		return $this->db->select("SELECT `id`, `title`, `url_name`, `content` FROM `$this->table` WHERE `parent` = ? ", array($parent));
+	}
+
 	function add($data){
 		foreach($data as $key => $val){
 			if(!in_array($key, $this->insertFields)){

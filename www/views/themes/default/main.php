@@ -31,6 +31,9 @@
 		.top-menu a:hover{
 			background-color: #eef;
 		}
+		table.page-frame tr td{
+			vertical-align: top;
+		}
 	td.context-menu a{
 		display:block;
 		width: 192px;
@@ -63,10 +66,31 @@
 		font-size: 0.9em;
 		color: #444;
 	}
+	.page-head{
+		margin: 4px 2px 0px 2px;
+		border: 1px solid #eee;
+		padding: 4px;
+		border-radius: 5px;
+	}
+	.page-head h4 a{
+		color: #008;
+		text-decoration: none;
+	}
+	.section-head{
+		margin: 4px 2px 0px 2px;
+		border: 1px solid #eee;
+		padding: 4px;
+		border-radius: 5px;
+	}
+	.section-head a{
+		color: #622;
+		text-decoration: none;
+		font-size: 1.2em;
+	}
 	</style>
 </header>
 <body>
-<div class="head">This a tiny and simple handmade CMS</div>
+<div class="head">Tiny and simple handmade CMS</div>
 <div class="top-menu">
 	<?=$topMenu?>
 </div>
@@ -76,7 +100,7 @@
 </div>
 <h3><?=$title?></h3>
 
-<table style="width: 100%">
+<table class="page-frame" style="width: 100%">
 	<tr>
 		<td style="border:1px solid #eee; width: 200px;" class="context-menu"><?=$contextMenu?></td>
 		<td style="border:1px solid #eee;" class="content"><?=$content?></td>

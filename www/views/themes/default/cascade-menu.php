@@ -1,3 +1,5 @@
+<a href="<?=(tpl::fullUrl())?>"><?=$mainTitle?></a> &gt;
 <?foreach($units as $unit):?>
-<a href="<?=(tpl::url('page', 'section', array($unit->url_name)))?>"><?=$unit->name?></a> &gt;
+	<?if($unit->id == 1) continue;?>
+<a href="<?=(tpl::url('page', 'section', array($unit->url_name)))?>"><?=$unit->title?></a> &gt;
 <?endforeach?>
