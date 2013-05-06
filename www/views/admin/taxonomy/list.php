@@ -60,15 +60,53 @@
 <script type="text/javascript">
 	var subPanel = {
 		parentId:0,
+		currentId:0,
+		actionType:null,
 		ui:null,
-		init: function(){
+		uriPull:{
+			createRecord:	'<?=$uriCreate?>',
+			editRecord:		'<?=$uriEdit?>'
+		},
+		unitData:{},
+		initUI: function(){
 			this.ui = $('#add-sub-panel');
+			$('.edit-btn').click(function(e){
+				var id = this.id.substr('edit-'.length);
+				log('edit, id = '+id)
+				var pos = {x :e.clientX + 100, y:e.clientY - 20}
+				subPanel.initEdit(id).show(pos);
+			});
+			$('.add-sub-btn').click(function(e){
+				var id = this.id.substr('add-sub-'.length);
+				log('add sub: ' + id);
+				log(e)
+				var pos = {x :e.clientX + 100, y:e.clientY - 20}
+				subPanel.initCreate(id).show(pos);
+			});
 			$('button#send').click(function(){subPanel.send()});
 			$('button#close').click(function(){subPanel.hide()});
 			return this;
 		},
-		setParent: function(parent){
-			this.parentId = parent;
+		initData: function(data){
+			this.unitData = data;
+		},
+		initCreate: function(id){
+			this.currentId = id;
+			this.actionType = 'createRecord';
+			$('input#sub-name').val('');
+			$('input#sub-url-name').val('');
+			return this;
+		},
+		initEdit: function(id){
+			this.currentId = id;
+			this.actionType = 'editRecord';
+			var unit = this.unitData[id];
+			// error check,
+			// TODO: doing something
+			if(!unit)
+				return;
+			$('input#sub-name').val(unit.title);
+			$('input#sub-url-name').val(unit.url_name);
 			return this;
 		},
 		show: function(pos){
@@ -82,18 +120,21 @@
 		send: function(){
 			var name = $('input#sub-name').val();
 			var urlName = $('input#sub-url-name').val();
+			log(this.uriPull[this.actionType])
 			$.ajax({
 				type: 'post',
-				url: '<?=$addSubUrl?>',
+				url: this.uriPull[this.actionType],
 				data: {
 					name: name,
 					urlName: urlName,
-					parent: this.parentId
+					id: this.currentId
 				},
 				success: function(data){
 					//log(data)
 					if(data.success){
 						document.location.reload();
+					} else {
+						subPanel.error();
 					}
 				},
 				error: function(){},
@@ -124,20 +165,9 @@
 		}
 	}
 	$(window).load(function(){
-		subPanel.init();
+		subPanel.initUI();
+		subPanel.initData(<?=$jsUnitData?>);
 		taxOptimization.init();
-		$('.edit-btn').click(function(){
-			log('edit')
-			var id = this.id.substr('edit-'.length);
-			//log(id)
-		});
-		$('.add-sub-btn').click(function(e){
-			var id = this.id.substr('add-sub-'.length);
-			log('add sub: ' + id);
-			log(e)
-			var pos = {x :e.clientX + 100, y:e.clientY - 20}
-			subPanel.setParent(id).show(pos);
-		});
 	})
 </script>
 
@@ -146,6 +176,7 @@
 	<input type="text" id="sub-url-name" placeholder="name of node" />
 	<button id="send">send</button>
 	<button id="close">close</button>
+	<div id="sub-panel-warning"></div>
 </div>
 
 <table class="tax-list" style="min-width: 600px;" border="1" >
@@ -157,7 +188,10 @@
 	</tr>
 	<?foreach($sections as $sec):?>
 	<tr>
-		<td><div style="margin-left: <?=($sec->deep * 20)?>px; padding-left: 4px;"><div class="rounded-block"></div> <?=$sec->title?></div><div class="clear"></div></td>
+		<td>
+			<div style="margin-left: <?=($sec->deep * 20)?>px; padding-left: 4px;">
+			<div class="rounded-block"></div> <?=$sec->title?></div><div class="clear"></div>
+		</td>
 		<td>
 			<span class="text-btn add-sub-btn" id="add-sub-<?=$sec->id?>">+ add sub node</span>
 			<?if($sec->id != 1):?>

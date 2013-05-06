@@ -45,10 +45,18 @@ class Admin extends Controller {
 		$tax = new TaxonomyTree($data);
 		//p($data);
 		//print $model->html_table($data, "min-width: 600px;");
+		$taxList = $tax->makeList();
+		$shortMap = array();
+		$mapKeys = array_flip(array('title','url_name'));
+		foreach($data as $unit){
+			$shortMap[$unit->id] = array_intersect_key(get_object_vars($unit), $mapKeys);
+		}
 		$codeList = Core::view('admin/taxonomy/list', array(
 			'sections'		=> $tax->makeList(),
-			'addSubUrl'		=> '/' . tpl::url('admin', 'taxonomy', array('create', 'record')),
-			'denormSubUrl'	=> '/' . tpl::url('admin', 'taxonomy', array('denormalize', 'record'))
+			'uriCreate'		=> '/' . tpl::url('admin', 'taxonomy', array('create', 'record')),
+			'uriEdit'		=> '/' . tpl::url('admin', 'taxonomy', array('edit', 'record')),
+			'denormSubUrl'	=> '/' . tpl::url('admin', 'taxonomy', array('denormalize', 'record')),
+			'jsUnitData'	=> json_encode($shortMap)
 		))->render();
 		Core::view('admin/main',
 			array(
@@ -65,12 +73,12 @@ class Admin extends Controller {
 		$model = Core::model('taxonomy');
 		$name = post('name');
 		$urlName = post('urlName');
-		$parent = intval(post('parent'));
+		$parent = intval(post('id'));
 
 		$valid = true;
 		$warnings = array();
 		// checking data
-		if(!$name){
+	/*	if(!$name){
 			$warnings['name'] = 'Empty name.';
 			$valid = false;
 		}else if($name AND !preg_match('#^[\w .,;:/()\#]+$#', $name)){
@@ -83,7 +91,9 @@ class Admin extends Controller {
 		}else if(!preg_match('#^[\w\-]+$#', $urlName)){
 			$warnings['url-name'] = 'Invalid character set.';
 			$valid = false;
-		}
+		}*/
+		$warnings = $this->taxonomyValidation($model);
+		$valid = $valid AND empty($warnings);
 
 		if(!$valid){
 			return print json_encode(array('success'=> false, 'list' => $warnings));
@@ -93,12 +103,67 @@ class Admin extends Controller {
 		return print json_encode(array('success' => true, 'id' => $id));
 	}
 
-	private function taxonomyEditForm(){
+	private function taxonomyValidation($model){
 
+		$name = post('name');
+		$urlName = post('urlName');
+
+		$warnings = array();
+		// checking data
+		if(!$name){
+			$warnings['name'] = 'Empty name.';
+		}else if($name AND !preg_match('#^[\w .,;:/()\#]+$#', $name)){
+			$warnings['name'] = 'Invalid character set.';
+		}
+		if(!$urlName){
+			$warnings['url-name'] = 'Empty name.';
+		}else if(!preg_match('#^[\w\-]+$#', $urlName)){
+			$warnings['url-name'] = 'Invalid character set.';
+		}
+		return $warnings;
+	}
+
+	private function taxonomyEditForm($formData, $warnings=null){
+		return Core::view('admin/main', array(
+			'content'	=> Core::view('admin/taxonomy/edit.form', array(
+				'formData'	=> $formData,
+				'warnings'	=> $warnings
+			))->render()
+		))->render(1);
 	}
 
 	private function taxonomyEditRecord(){
 		$model = Core::model('taxonomy');
+		$title = post('name');
+		$urlName = post('urlName');
+		$parent = intval(post('parent'));
+		$id = intval(post('id'));
+
+		$valid = preg_match('#^\d+$#', $id);
+		if($parent){
+			$valid = preg_match('#^\d+$#', $parent);
+		}
+
+		$warnings = $this->taxonomyValidation($model);
+		$valid = $valid AND empty($warnings);
+
+		//
+		if(!$valid){
+			return print json_encode(array('success' => false, 'warnings' => $warnings));
+		}
+		// save
+		$saveData = array(
+			'title'		=> $title,
+			'url_name'	=> $urlName
+		);
+		if($parent){
+			$saveData['parent']	= $parent;
+		}
+		$updated = $model->updateById($saveData, $id);
+	//	p($updated);
+		if($updated){
+			return print json_encode(array('success' => true, 'updated' => $updated));
+		}
 	}
 
 	private function taxonomyDenormalizeRecord(){

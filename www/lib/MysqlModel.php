@@ -59,12 +59,12 @@ abstract class MysqlModel{
 	}
 
 	function updateById($data, $id){
-		return $this->updateByCon($data, array('query' => '`id` = ?', 'data' => array($id)));
+		return $this->updateByCon($data, array('query' => '`id` = ?', 'data' => array(intval($id))));
 	}
 
 	function infoById($id){
 		$fields = $this->fieldList();
-		return $this->db->selectOne("SELECT {$fields} FROM `{$this->table}` WHERE `id` = ? ;", array($id));
+		return $this->db->selectOne("SELECT {$fields} FROM `{$this->table}` WHERE `id` = ? ;", array(intval($id)));
 	}
 
 
