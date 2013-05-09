@@ -66,4 +66,19 @@ class TaxonomyModel extends MysqlModel{
 		return $this->db->selectOne($sql, array($index));
 	}
 
+	function activate($id, $val){
+		return $this->hierarchicUpdate($id, array('active' => $val));
+	}
+
+	function hierarchicUpdate($nodeId, $data){
+		$nodeId = intval($nodeId);
+		return $this->updateByCon(
+			$data,
+			array(
+				'query'	=> " `id`= ? OR `parent` = ? OR `parent_id_chain` LIKE ? ",
+				'data'	=> array($nodeId, $nodeId, "%;{$nodeId};%")
+			)
+		);
+	}
+
 }

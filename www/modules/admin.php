@@ -43,8 +43,6 @@ class Admin extends Controller {
 		$model = Core::model('taxonomy');
 		$data = $model->all();
 		$tax = new TaxonomyTree($data);
-		//p($data);
-		//print $model->html_table($data, "min-width: 600px;");
 		$taxList = $tax->makeList();
 		$shortMap = array();
 		$mapKeys = array_flip(array('title','url_name'));
@@ -55,6 +53,8 @@ class Admin extends Controller {
 			'sections'		=> $tax->makeList(),
 			'uriCreate'		=> '/' . tpl::url('admin', 'taxonomy', array('create', 'record')),
 			'uriEdit'		=> '/' . tpl::url('admin', 'taxonomy', array('edit', 'record')),
+			'uriActivate'		=> '/' . tpl::url('admin', 'activate', array('taxonomy', 'on')),
+			'uriDeactivate'		=> '/' . tpl::url('admin', 'activate', array('taxonomy', 'off')),
 			'denormSubUrl'	=> '/' . tpl::url('admin', 'taxonomy', array('denormalize', 'record')),
 			'jsUnitData'	=> json_encode($shortMap)
 		))->render();
@@ -187,7 +187,7 @@ class Admin extends Controller {
 			$parentId = 1;
 
 		$pmodel = Core::model('pages');
-		$pdata = $pmodel->namesByParent($parentId);
+		$pdata = $pmodel->namesByParent($parentId, false);
 
 		$tmodel = Core::model('taxonomy');
 		$parent = $tmodel->infoById($parentId);
@@ -196,6 +196,8 @@ class Admin extends Controller {
 		$tax = new TaxonomyTree($tlist);
 
 		$content = Core::view('admin/pages/list', array(
+			'uriActivate'		=> '/' . tpl::url('admin', 'activate', array('page', 'on')),
+			'uriDeactivate'		=> '/' . tpl::url('admin', 'activate', array('page', 'off')),
 			'pages'		=> $pdata,
 			'sections'	=> $tax->makeList(),
 			'current'		=> $parent
@@ -232,23 +234,8 @@ class Admin extends Controller {
 		$content = post('page_content');
 		$parentId = intval(post('parent'));
 		//check data
-		$warnings = array();
-		$valid = true;
-
-		if(!$title){
-			$warnings['title'] = 'Empty name.';
-			$valid = false;
-		}else if($title AND !preg_match('#^[\w .,;:/()\#]+$#', $title)){
-			$warnings['title'] = 'Invalid character set.';
-			$valid = false;
-		}
-		if(!$urlName){
-			$warnings['url_name'] = 'Empty name.';
-			$valid = false;
-		}else if(!preg_match('#^[\w\-]+$#', $urlName)){
-			$warnings['url_name'] = 'Invalid character set.';
-			$valid = false;
-		}
+		$warnings = $this->pageValidation();
+		$valid = empty($warnings);
 
 		if(!$valid){
 			$formData = array();
@@ -270,14 +257,101 @@ class Admin extends Controller {
 		header('location: ' . tpl::fullUrl('admin', 'pages', array($parentId)));
 	}
 
-	private function pageEditForm(){
+	private function pageValidation(){
+		$title = post('title');
+		$urlName = post('url_name');
+		$warnings = array();
+		if(!$title){
+			$warnings['title'] = 'Empty name.';
+		}else if($title AND !preg_match('#^[\w .,;:/()\#]+$#', $title)){
+			$warnings['title'] = 'Invalid character set.';
+		}
+		if(!$urlName){
+			$warnings['url_name'] = 'Empty name.';
+		}else if(!preg_match('#^[\w\-]+$#', $urlName)){
+			$warnings['url_name'] = 'Invalid character set.';
+		}
+		return $warnings;
+	}
 
+	private function pageEditForm($formData=null, $warnings=null){
+		$id = intval(get('id'));
+
+		$model = Core::model('pages');
+		$pageData = get_object_vars( $model->infoById($id));
+
+		if($formData){
+			$pageData = array_replace ($pageData, $formData);
+		}
+
+		$tmodel = Core::model('taxonomy');
+		$tlist = $tmodel->all();
+		Core::extLib('TaxonomyTree');
+		$tax = new TaxonomyTree($tlist);
+
+		$content = Core::view('admin/pages/edit.form', array(
+			'action'	=>	tpl::url('admin', 'page', array('edit', 'record')),
+			'formData'	=>	$pageData,
+			'sections'	=> array_slice($tax->makeList(), 1),
+			'warnings'	=> $warnings
+		))->render();
+
+		Core::view('admin/main',
+			array(
+				'title'		=> 'add page',
+				'content'	=> $content
+			))->render(1);
 
 	}
 
 	private function pageEditRecord(){
+		$title = post('title');
+		$urlName = post('url_name');
+		$content = post('content');
+		$id = intval(post('id'));
 
+		$warnings = $this->pageValidation();
+		$valid = empty($warnings);
+
+		$formData = array(
+			'title' => $title,
+			'url_name' => $urlName,
+			'content' => $content
+		);
+		if(!$valid){
+			$formData['id']= $id;
+			return $this->pageEditForm($formData, $warnings);
+		}
+
+		$parent = post('parent');
+		if ($parent AND preg_match('#^\d+$#', $parent)){
+			$formData['parent'] = intval($parent);
+		}
 		$model = Core::model('pages');
+		$model->updateById(
+			$formData
+		, $id);
+		$page = $model->infoById($id);
+		header('location: ' . tpl::fullUrl('admin', 'pages', array($page->parent)));
+	}
+
+	function activate($type, $act){
+		if(!in_array($type, array('page', 'taxonomy')) OR !in_array($act, array('on', 'off'))){
+			return print json_encode(array('success' => false, 'msg' => 'bad type'));
+		}
+		$actVal = ($act == 'on');// ? 0 : 1;
+		$names = array(
+			'page'	=> 'pages',
+			'taxonomy'	=> 'taxonomy'
+		);
+		$id = post('id');
+	//	p($names[$type]);
+		$model = Core::model($names[$type]);
+	//	$updated = $model->updateById(array('active' => $actVal), $id);
+
+		$updated = $model->activate($id, $actVal);
+
+		return print json_encode(array('success' => true, 'updated' => $updated));
 	}
 
 	private function pagesDenormalizeRecord(){
@@ -286,6 +360,35 @@ class Admin extends Controller {
 
 	function users(){
 
+		$content = 'users administration';
+		Core::view('admin/main',
+			array(
+				'title'		=> 'Users',
+				'content'	=> $content
+			))->render(1);
+	}
+
+	function options(){
+		$model = Core::model('options');
+		$data = $model->all();
+
+		$content = tpl::html_table($data);
+
+		Core::view('admin/main',
+			array(
+				'title'		=> 'Options',
+				'content'	=> $content
+			))->render(1);
+	}
+
+	function themes(){
+
+		$content = 'Themes administration';
+		Core::view('admin/main',
+			array(
+				'title'		=> 'Themes',
+				'content'	=> $content
+			))->render(1);
 	}
 
 }

@@ -2,18 +2,21 @@
 
 class PagesModel extends MysqlModel{
 	protected $table = 'pages';
-	protected $insertFields = array('parent', 'title', 'url_name', 'content');
+	protected $insertFields = array('parent', 'title', 'url_name', 'content', 'active');
+	protected $infoFields = array('id', 'parent', 'title', 'url_name', 'content', 'active');
 
-	function namesByParent($parent){
+	function namesByParent($parent, $active=true){
 		if(!$parent)
 			return array();
-		return $this->db->select("SELECT `id`, `title`, `url_name` FROM `$this->table` WHERE `parent` = ? ", array($parent));
+		$fields = '`' . implode('`,`', array_diff($this->infoFields, array('content'))) . '`';
+		return $this->db->select("SELECT {$fields} FROM `$this->table` WHERE `parent` = ? " . ($active ? "AND `active` = true " : ""), array($parent));
 	}
 
-	function contentByParent($parent){
+	function contentByParent($parent, $active=true){
 		if(!$parent)
 			return array();
-		return $this->db->select("SELECT `id`, `title`, `url_name`, `content` FROM `$this->table` WHERE `parent` = ? ", array($parent));
+		$fields = '`' . implode('`,`', $this->infoFields) . '`';
+		return $this->db->select("SELECT {$fields} FROM `$this->table` WHERE `parent` = ? ". ($active ? "AND `active` = true " : ""), array($parent));
 	}
 
 	function add($data){
@@ -30,6 +33,10 @@ class PagesModel extends MysqlModel{
 			throw new Exception('pages model: incorrect identifier name');
 		$sql = "SELECT * FROM `{$this->table}` WHERE `$field` = ? ";
 		return $this->db->selectOne($sql, array($index));
+	}
+
+	function activate($id, $val){
+		return $this->updateById(array('active' => $val), $id);
 	}
 
 }

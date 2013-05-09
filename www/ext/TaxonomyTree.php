@@ -46,6 +46,14 @@ class TaxonomyTree {
 		return $res;
 	}
 
+	// ?
+	function activate($id, $act=true){
+		$this->tree->activate($id, $act);
+		$act = function($node, $act){
+
+		};
+	}
+
 }
 
 class TaxUnit {
@@ -76,6 +84,10 @@ class TaxUnit {
 		return FALSE;
 	}
 
+	function active($id, $act){
+		$unit = $this->find($id);
+	}
+
 	function insert($node){
 		$this->subunits[] = $node;
 		$this->currentChildIndex = 0;
@@ -96,6 +108,10 @@ class TaxUnit {
 			}
 		}
 		return null;
+	}
+
+	function findExec($id, $fun){
+		// ?
 	}
 
 	function firstChild(){

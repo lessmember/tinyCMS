@@ -63,10 +63,49 @@
 	table.tax-list tr td:nth-child(1){
 		border-spacing: 0;
 	}
+	table.page-list tr td span.page-deactivated{
+		color: #888;
+	}
 </style>
 
 <script type="text/javascript">
-
+var interPanel = {
+	uriPull:{
+		activate:		'<?=$uriActivate?>',
+		deactivate:		'<?=$uriDeactivate?>'
+	},
+	init: function(){
+		$('.act-btn').click(function(){
+			var id = this.id.substr('active-'.length);
+			interPanel.activate(id, 'deactivate');
+		});
+		$('.deact-btn').click(function(){
+			var id = this.id.substr('active-'.length);
+			interPanel.activate(id, 'activate');
+		});
+	},
+	activate: function(id, act){
+		log(id)
+		$.ajax({
+			type: 'post',
+			url: this.uriPull[act],
+			data: {
+				id: id
+			},
+			success: function(data){
+				if(data.success && data.updated){
+					document.location.reload();
+				} else {
+				}
+			},
+			error: function(){},
+			dataType:'json'
+		})
+	}
+}
+$(window).load(function(){
+	interPanel.init();
+})
 </script>
 
 <table id="skeleton">
@@ -112,11 +151,14 @@
 				<?foreach($pages as $page):?>
 				<tr>
 					<td><?=$page->id?></td>
-					<td><?=$page->title?></td>
+					<td><span class="<?=(!$page->active? 'page-deactivated' : '')?>"><?=$page->title?></span></td>
 					<td>
-						<a class="text-btn edit-btn" href="/<?=(tpl::url('admin', 'page', array('edit', 'form')))?>" id="edit-<?=$page->id?>">edit</a>
+						<a class="text-btn edit-btn" href="/<?=(tpl::url('admin', 'page', array('edit', 'form', 'id' => $page->id)))?>"
+						   id="edit-<?=$page->id?>">edit</a>
 						<a class="text-btn edit-btn" href="/<?=(tpl::url('admin', 'page', array('view')))?>" id="view-<?=$page->id?>">view</a>
 						<a class="text-btn del-btn" id="del-<?=$page->id?>">delete</a>
+						<span class="text-btn <?=($page->active ? '' : 'de')?>act-btn"
+						id="active-<?=$page->id?>"><?=($page->active ? 'de' : '')?>activate</span>
 					</td>
 				</tr>
 				<?endforeach?>

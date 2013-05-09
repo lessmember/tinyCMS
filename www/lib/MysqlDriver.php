@@ -14,6 +14,9 @@ class MysqlDriver extends PDO {
 	function do_query($sql, $data=null){
 		if (!is_array($data))
 			$data = array($data);
+	//	p($sql);
+	//	p($data);
+	//	exit;
 		$stat = $this->prepare($sql); // returns PDOStatement
 		$stat->execute($data);
 		$this->lastResult = $stat;
@@ -33,8 +36,6 @@ class MysqlDriver extends PDO {
 	}
 
 	function selectOne($sql, $options=null){
-	//	var_dump($sql);
-	//	var_dump($options);
 		$res = $this->select($sql, $options);
 	//	var_dump($res);
 		return empty($res) ? null: $res[0];

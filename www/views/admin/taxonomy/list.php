@@ -40,13 +40,18 @@
 	}
 	.rounded-block{
 		border: 1px solid #888;
-		background-color: #f80;
 		display: block;
 		float: left;
 		border-radius: 4px;
 		width: 16px;
 		height: 16px;
 		margin-right: 2px;
+	}
+	.act-icon{
+		background-color: #f80;
+	}
+	.deact-icon{
+		background-color: #eee;
 	}
 	#tax-denorm-mode{
 		color: #88a;
@@ -65,7 +70,9 @@
 		ui:null,
 		uriPull:{
 			createRecord:	'<?=$uriCreate?>',
-			editRecord:		'<?=$uriEdit?>'
+			editRecord:		'<?=$uriEdit?>',
+			activate:		'<?=$uriActivate?>',
+			deactivate:		'<?=$uriDeactivate?>'
 		},
 		unitData:{},
 		initUI: function(){
@@ -83,6 +90,15 @@
 				var pos = {x :e.clientX + 100, y:e.clientY - 20}
 				subPanel.initCreate(id).show(pos);
 			});
+			$('.act-btn').click(function(){
+				var id = this.id.substr('active-'.length);
+				subPanel.activate(id, 'deactivate');
+			});
+			$('.deact-btn').click(function(){
+				var id = this.id.substr('active-'.length);
+				subPanel.activate(id, 'activate');
+			});
+
 			$('button#send').click(function(){subPanel.send()});
 			$('button#close').click(function(){subPanel.hide()});
 			return this;
@@ -116,6 +132,25 @@
 		hide: function(){
 			$(this.ui).css({display:'none'});
 			return this;
+		},
+		activate: function(id, act){
+			log(id)
+			$.ajax({
+				type: 'post',
+				url: this.uriPull[act],
+				data: {
+					id: id
+				},
+				success: function(data){
+					//log(data)
+					if(data.success && data.updated){
+						document.location.reload();
+					} else {
+					}
+				},
+				error: function(){},
+				dataType:'json'
+			})
 		},
 		send: function(){
 			var name = $('input#sub-name').val();
@@ -190,13 +225,15 @@
 	<tr>
 		<td>
 			<div style="margin-left: <?=($sec->deep * 20)?>px; padding-left: 4px;">
-			<div class="rounded-block"></div> <?=$sec->title?></div><div class="clear"></div>
+			<div class="rounded-block <?=($sec->active ? '' : 'de')?>act-icon"></div> <?=$sec->title?></div><div class="clear"></div>
 		</td>
 		<td>
 			<span class="text-btn add-sub-btn" id="add-sub-<?=$sec->id?>">+ add sub node</span>
 			<?if($sec->id != 1):?>
 			<span class="text-btn edit-btn" id="edit-<?=$sec->id?>">edit</span>
-			<span class="text-btn del-btn" id="del-<?=$sec->id?>">- remove node</span>
+			<span class="text-btn del-btn" id="del-<?=$sec->id?>">- remove</span>
+			<span class="text-btn <?=($sec->active ? '' : 'de')?>act-btn"
+				  id="active-<?=$sec->id?>"><?=($sec->active ? 'de' : '')?>activate</span>
 			<?endif?>
 		</td>
 	</tr>

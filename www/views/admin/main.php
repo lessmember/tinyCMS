@@ -65,6 +65,7 @@
 	<a href="/<?=tpl::url('admin', 'pages')?>">pages</a>
 	<a href="/<?=tpl::url('admin', 'users')?>">users</a>
 	<a href="/<?=tpl::url('admin', 'themes')?>">themes</a>
+	<a href="/<?=tpl::url('admin', 'options')?>">options</a>
 </div>
 <h3><?=$title?></h3>
 <?=$content?>
