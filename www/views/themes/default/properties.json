@@ -1,0 +1,6 @@
+{
+	"name":"default",
+	"units":[
+		"main", "content", "menu", "content-menu", "cascade-menu"
+	]
+}

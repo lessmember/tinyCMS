@@ -4,14 +4,46 @@ class Page extends Controller {
 
 	private $pageType = 'common_page';
 
-	private $themeOptions = array(
-		'name'		=> 'default',
-		'units'		=> array(
-			'main', 'content', 'menu', 'content-menu', 'cascade-menu'
-		)
-	);
+	private $themeOptions;
+
+	function __construct(){
+		parent::__construct();
+		$theme = Core::conf('theme');
+		if($this->loadTheme($theme)){
+
+		} else if($this->loadTheme()){
+
+		} else {
+			$this->themeOptions = array(
+				'name'		=> 'default',
+				'def' => '1',
+				'units'		=> array(
+					'main', 'content', 'menu', 'content-menu', 'cascade-menu'
+				)
+			);
+		}
+	}
+
+	private function loadTheme($theme='default'){
+		$dir = DOC_ROOT . '/views/themes/' . $theme;
+		$proFile = $dir.'/'. 'properties.json';
+		if(file_exists($proFile)){
+			$optionsContent = file_get_contents($proFile);
+			$options = json_decode($optionsContent, true);
+			if(json_last_error() == JSON_ERROR_NONE){
+				$this->themeOptions = $options;
+				return true;
+			} else {
+				return false;
+			}
+		}
+		return false;
+	}
 
 	function index(){
+		$pageType = Core::conf('default.page.type');
+		if($pageType == 'section')
+			return $this->section(Core::conf('default.page'));
 		return $this->content(Core::conf('default.page')); //TODO: move to DB, add DB part of config to Core
 	}
 
@@ -96,7 +128,7 @@ class Page extends Controller {
 */
 	}
 
-	function section($id=1){
+	function section($id=2){
 		$this->pageType = 'section';
 		$field = $this->idName($id);
 
@@ -107,7 +139,7 @@ class Page extends Controller {
 		}
 
 		//*************
-
+	//	p($curData);
 
 		$parentId = $curData->parent;
 
@@ -151,8 +183,8 @@ class Page extends Controller {
 	}
 
 	private function currentThemeUnit($unit){
-		$theme = 'default';
-		$useTheme = (isset($this->themeOptions['units'][$unit])) ? $theme : 'default';
+		$theme = $this->themeOptions['name'];
+		$useTheme = (in_array($unit, $this->themeOptions['units'])) ? $theme : 'default';
 		return 'themes/'. $useTheme . '/' . $unit;
 	}
 

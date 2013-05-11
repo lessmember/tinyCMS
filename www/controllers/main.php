@@ -4,6 +4,6 @@ class Main extends Controller {
 
 	function index(){
 		//print 'main::index()';
-		return Core::controller('page')->content(Core::conf('default.page'));
+		return Core::controller('page')->index();
 	}
 }
