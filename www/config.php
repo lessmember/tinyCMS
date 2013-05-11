@@ -2,6 +2,7 @@
 
 $config = array(
 	'controllerName' => 'module',
+	'subControllerName'	=> 'sub_module',
 	'methodName' => 'action',
 
 	'defaultController' => 'main',
@@ -27,5 +28,8 @@ $config = array(
 
 	'ext.lib' => array(
 		'TaxonomyTree'		=>	DOC_ROOT . '/ext/TaxonomyTree.php'
+	),
+
+	'context.class.aliases'=> array(
 	)
 );

@@ -3,7 +3,15 @@
 class tpl {
 
 	static function url($controller, $method=false, $params=false){
-		$url = "?". Core::conf('controllerName') ."=".$controller;
+		$controllerName = $controller;
+		$subController = null;
+		if(is_array($controller)){
+			$controllerName = $controller[0];
+			$subController = $controller[1];
+		}
+		$url = "?". Core::conf('controllerName') ."=".$controllerName;
+		if($subController)
+			$url .= "&" . Core::conf('subControllerName') . '=' . $subController;
 		if($method !== false){
 			$url .= "&".Core::conf('methodName')."=". $method;
 			$assoc = array();
@@ -62,6 +70,10 @@ class tpl {
 			$tbody .= '</tr>';
 		}
 		return "<table border='1' style='{$tabStyle}'>" . "\n" .$header . $tbody . "\n" . '</table>';
+	}
+
+	static function globalStat(){
+		print( round(10000*(microtime(true) - GLOBAL_LOG_TIME_START))/10000 );
 	}
 
 }

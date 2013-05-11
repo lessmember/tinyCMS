@@ -24,12 +24,18 @@ class Core{
 
 	function run(){
 		$context = self::inst()->context;
-		$controllerName = $context->controller;
+		$subController = $context->subController;
+		$fileController = $controllerName = $context->controller;
 		$method = $context->method;
 		$params = $context->params;
 	//	p($context);
+		if($subController){
+			$this->loadBaseController($fileController);
+			$fileController = $fileController . '/' . $subController;
+			$controllerName = $controllerName . ucfirst($subController);
+		}
 		try{
-			$this->loadController($controllerName);
+			$this->loadController($fileController);
 		}catch(Exception $e){
 			return $this->runError('page404', $_SERVER['REQUEST_URI']);
 		}
@@ -49,6 +55,20 @@ class Core{
 		call_user_func_array(array($controller, $method), $params);
 	}
 
+	function loadBaseController($name){
+		$fileName = $name. '/'.$name;
+		try{
+			$this->loadController($fileName);
+		} catch (Exception $e){
+			if($e->getCode() == 1001){
+				$className = ucfirst($name) . '_BaseController';
+				exec("class {$className} extends Controller {}");
+			} else {
+				throw new Exception($e->getMessage());
+			}
+		}
+	}
+
 	function runError($page, $msg){
 		$controllerName = 'service';
 		$this->loadController($controllerName);
@@ -58,9 +78,9 @@ class Core{
 	}
 
 	function loadController($name){
-		$fname = DOC_ROOT. '/modules/' . $name . '.php';
+		$fname = DOC_ROOT. '/controllers/' . $name . '.php';
 		if(!file_exists($fname))
-			throw new Exception('No same controller!');
+			throw new Exception('No same controller!', 1001);
 		require_once($fname);
 	}
 

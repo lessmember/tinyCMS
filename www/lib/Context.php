@@ -13,10 +13,14 @@ class Context {
 		$this->set('host', $_SERVER['HTTP_HOST']);
 		$this->set('referer', isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : null);
 		$this->set('uri', isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : null);
+
 		$controllerName = get(Core::conf('controllerName'));
 		if(!$controllerName)
 			$controllerName = Core::conf('defaultController');
 		$this->set('controller', $controllerName);
+
+		$subControllerName = get(Core::conf('subControllerName'));
+		$this->set('subController', $subControllerName);
 
 		$methodName = get(Core::conf('methodName'));
 		if(!$methodName)
