@@ -12,4 +12,16 @@ class TestsubSub1 extends Testsub_BaseController {
 		tpl::globalStat( round(10000*(microtime(true) - GLOBAL_LOG_TIME_START))/10000 );
 	}
 
+	function save(){
+		return;
+		$model = Core::model('options');
+		$res = $model->multiUpdate(
+			array(
+				array('id'=>1, 'value'=>'default'),
+				array('id'=>2, 'value'=>'2')
+			)
+		);
+		var_dump($res);
+	}
+
 }

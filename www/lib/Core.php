@@ -123,6 +123,18 @@ class Core{
 		return new $className();
 	}
 
+	static function cache($name, $data=null){
+		$file = DOC_ROOT . '/cache/' . $name . '.json';
+		if($data){
+			return file_put_contents($file, json_encode($data));
+		} else {
+			if(!file_exists($file)){
+				return false;
+			}
+			return json_decode(file_get_contents($file), true);
+		}
+	}
+
 	static function extLib($name){
 		$extFiles = self::conf('ext.lib');
 		if(!isset($extFiles[$name]))

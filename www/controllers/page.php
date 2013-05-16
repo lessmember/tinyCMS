@@ -5,10 +5,12 @@ class Page extends Controller {
 	private $pageType = 'common_page';
 
 	private $themeOptions;
+	private $optModel;
 
 	function __construct(){
 		parent::__construct();
-		$theme = Core::conf('theme');
+		$this->optModel = Core::model('options');
+		$theme = $this->optModel->val('theme');
 		if($this->loadTheme($theme)){
 
 		} else if($this->loadTheme()){

@@ -4,17 +4,34 @@
  * list of installed themes (?),
  */
 
-class OptionsModel extends MysqlModel{
+class Option_valuesModel extends MysqlModel{
 	protected $table = 'option_values';
-	protected $insertFields = array('value', 'option_id');
-	protected $infoFields = array('id', 'option_id','value');
+	protected $insertFields = array('value', 'option');
+	protected $infoFields = array('id', 'option','value');
 
 	function all(){
-		return $this->db->select("SELECT * FROM `{$this->table}` ORDER BY `option_id`, `value` ");
+		return $this->db->select("SELECT ov.*, op.name FROM `option_values` ov
+			JOIN `options` op ON ov.option = op.id
+			ORDER BY `option`, `value` ");
 	}
 
 	function byOption($optionId){
-		return $this->db->select("SELECT * FROM `{$this->table}` ORDER BY `value` WHERE `option_id` = ? ", array($optionId));
+		return $this->db->select("SELECT ov.*, op.name FROM `option_values` ov
+			JOIN `options` op ON ov.option = op.id
+			WHERE `option` = ? ORDER BY `value` ",
+			array($optionId));
+	}
+
+	function valMap(){
+		$data = $this->all();
+		$res = array();
+		foreach($data as $row){
+			if(!isset($res[$row->name])){
+				$res[$row->name] = array();
+			}
+			$res[$row->name][] = $row->value;
+		}
+		return $res;
 	}
 
 }
