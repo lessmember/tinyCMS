@@ -95,7 +95,7 @@
 	</style>
 </header>
 <body>
-<div class="head">Tiny and simple handmade CMS</div>
+<div class="head"><?=$projectTitle?></div>
 <div class="top-menu">
 	<?=$topMenu?>
 </div>

@@ -4,6 +4,7 @@ class Admin extends Controller {
 
 	function __construct(){
 		parent::__construct();
+		$this->regularPage();
 		$user = Session::get('user');
 		if(!$user){
 			return header('location: '. tpl::fullUrl('login','form',array('redirect' => Core::context()->uri)));
@@ -93,10 +94,16 @@ class Admin extends Controller {
 			$valid = false;
 		}*/
 		$warnings = $this->taxonomyValidation($model);
-		$valid = $valid AND empty($warnings);
+	//	p($warnings);
+		$valid = empty($warnings);
 
+		$found = $model->getBy($urlName, 'url_name');
+		if($found){
+			$warnings['url-name'] = 'Duplicate url-name.';
+		}
+	//	var_dump($valid);
 		if(!$valid){
-			return print json_encode(array('success'=> false, 'list' => $warnings));
+			return print json_encode(array('success'=> false, 'warnings' => $warnings));
 		}
 
 		$id = $model->add($name, $urlName, $parent);
@@ -112,7 +119,7 @@ class Admin extends Controller {
 		// checking data
 		if(!$name){
 			$warnings['name'] = 'Empty name.';
-		}else if($name AND !preg_match('#^[\w .,;:/()\#]+$#', $name)){
+		}else if($name AND !preg_match('#^[\w .,;:/()\#]+$#u', $name)){
 			$warnings['name'] = 'Invalid character set.';
 		}
 		if(!$urlName){
@@ -145,11 +152,20 @@ class Admin extends Controller {
 		}
 
 		$warnings = $this->taxonomyValidation($model);
-		$valid = $valid AND empty($warnings);
 
+		$found = $model->getBy($urlName, 'url_name');
+	//	p($found);
+	//	p($_POST);
+		if($found AND $found->id != $id){
+			$warnings['url-name'] = 'Duplicate url-name.';
+		}
+		$valid = (empty($warnings) AND $valid);
+	//	p($warnings);
+	//	p($valid);
 		//
 		if(!$valid){
-			return print json_encode(array('success' => false, 'warnings' => $warnings));
+			return $this->jsonResponse(array('success' => false, 'warnings' => $warnings));
+		//	return print json_encode(array('success' => false, 'warnings' => $warnings));
 		}
 		// save
 		$saveData = array(
@@ -263,7 +279,7 @@ class Admin extends Controller {
 		$warnings = array();
 		if(!$title){
 			$warnings['title'] = 'Empty name.';
-		}else if($title AND !preg_match('#^[\w .,;:/()\#]+$#', $title)){
+		}else if($title AND !preg_match('#^[\w .,;:/()\#]+$#u', $title)){
 			$warnings['title'] = 'Invalid character set.';
 		}
 		if(!$urlName){

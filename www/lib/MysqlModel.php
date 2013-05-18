@@ -15,7 +15,9 @@ abstract class MysqlModel{
 	function __construct($confName=null){
 		if(!$confName)
 			$confName = 'db.connection.default';
-		$this->db = new MysqlDriver(Core::conf($confName));
+		$dbConf = Core::conf($confName);
+		$this->db = new MysqlDriver($dbConf);
+		$this->db->query("SET NAMES ?", array($dbConf['encoding']));
 	}
 
 	function insert($data){

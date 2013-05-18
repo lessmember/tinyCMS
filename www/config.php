@@ -15,16 +15,17 @@ $config = array(
 
 	'auth.cookie.period'	=> 24*60*60*14,
 
-	'default.page'	=>	2,
+/*	'default.page'	=>	2,
 	'default.page.type'	=>	'section',
 	'theme'			=> 'red-lake', //'default',
-
+*/
 	'db.connection.default' => array(
 		'name' => 'tinycms',
 		'login' => 'devadmin',
 		'password' => '1',
 		'port' => '',
 		'host' => '127.0.0.1',
+		'encoding'	=> 'utf8'
 	),
 
 	'ext.lib' => array(

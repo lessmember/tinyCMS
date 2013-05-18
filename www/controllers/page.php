@@ -6,11 +6,18 @@ class Page extends Controller {
 
 	private $themeOptions;
 	private $optModel;
+	private $options;
 
 	function __construct(){
 		parent::__construct();
+		$this->regularPage();
 		$this->optModel = Core::model('options');
-		$theme = $this->optModel->val('theme');
+		$optData = $this->optModel->all();
+		$this->options = array();
+		foreach($optData as $row){
+			$this->options[$row->name]= $row->value;
+		}
+		$theme = $this->options['theme'];
 		if($this->loadTheme($theme)){
 
 		} else if($this->loadTheme()){
@@ -18,7 +25,7 @@ class Page extends Controller {
 		} else {
 			$this->themeOptions = array(
 				'name'		=> 'default',
-				'def' => '1',
+				'def'		=> '1',
 				'units'		=> array(
 					'main', 'content', 'menu', 'content-menu', 'cascade-menu'
 				)
@@ -43,20 +50,22 @@ class Page extends Controller {
 	}
 
 	function index(){
-		$pageType = Core::conf('default.page.type');
+		$pageType = $this->options['default.page.type'];
+		$pageId = $this->options['default.page'];
 		if($pageType == 'section')
-			return $this->section(Core::conf('default.page'));
-		return $this->content(Core::conf('default.page')); //TODO: move to DB, add DB part of config to Core
+			return $this->section($pageId);
+		return $this->content($pageId); //TODO: move to DB, add DB part of config to Core
 	}
 
 	private function build($data){
 		Core::view($this->currentThemeUnit('main'), array(
-			'title'		=> $data->title,
-			'content'	=> Core::view( $this->currentThemeUnit('content'), array('content' => $data->content))->render(),
-			'topMenu'	=> Core::view( $this->currentThemeUnit('menu'), array('units'	=> $data->topMenu) )->render(),
+			'title'			=> $data->title,
+			'projectTitle'	=> $this->options['project.title'],
+			'content'		=> Core::view( $this->currentThemeUnit('content'), array('content' => $data->content))->render(),
+			'topMenu'		=> Core::view( $this->currentThemeUnit('menu'), array('units'	=> $data->topMenu) )->render(),
 			'contextMenu'	=> Core::view( $this->currentThemeUnit('context-menu'), array(
 					'pages' => $data->contextMenu,
-					'isSection' => $data->isSection,
+					'isSection' 	=> $data->isSection,
 					'current'		=> $data->current
 				))->render(),
 			'cascadeMenu'		=> Core::view( $this->currentThemeUnit('cascade-menu'), array(
@@ -141,18 +150,20 @@ class Page extends Controller {
 		}
 
 		//*************
-	//	p($curData);
+		//p($curData);
 
 		$parentId = $curData->parent;
 
 		$parentData = $model->infoById($parentId);
-	//	print tpl::html_table($parentData);
+		//print tpl::html_table($parentData);
 
 		// context menu
 		$contextData = $model->namesByParent($parentId);
 	//	print tpl::html_table($contextData);
 
 		// cascade menu
+		//p($parentData);
+		$chain = $parentData->parent_id_chain;
 		$cascadeData = $model->namesByChain($parentData->parent_id_chain);
 		$cascadeData[] = $parentData;
 

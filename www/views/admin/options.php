@@ -5,6 +5,9 @@
 		border-collapse: collapse;
 		border: 1px solid #eee;
 	}
+	table.options input{
+		min-width: 300px;
+	}
 </style>
 <form method="post" action="/<?=$action?>">
 	<table class="options">
@@ -17,13 +20,13 @@
 		<td><?=$unit->name?></td>
 		<td>
 			<?if(isset($optValues[$unit->name])):?>
-				<select name="<?=$unit->name?>">
+				<select name="<?=$unit->formName?>">
 					<?foreach($optValues[$unit->name] as $val):?>
 					<option value="<?=$val?>" <?=($val == $unit->value ? 'selected=selected' : '')?> ><?=$val?></option>
 					<?endforeach?>
 				</select>
 			<?else:?>
-			<input type="text" name="<?=$unit->name?>" value="<?=$unit->value?>" />
+			<input type="text" name="<?=$unit->formName?>" value="<?=$unit->value?>" />
 			<?endif?>
 		</td>
 	</tr>

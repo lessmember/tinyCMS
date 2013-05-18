@@ -22,7 +22,7 @@
 		border: 1px solid #eee;
 		display: none;
 		width: 400px;
-		height: 150px;
+		min-height: 150px;
 	}
 	div#add-sub-panel input[type="text"]{
 		width: 350px;
@@ -59,6 +59,10 @@
 	}
 	.clear{
 		clear:both;
+	}
+	#sub-panel-warning{
+		color: red;
+		margin: 1px 10px 1px 10px;
 	}
 </style>
 
@@ -165,16 +169,28 @@
 					id: this.currentId
 				},
 				success: function(data){
-					//log(data)
+					log(data)
 					if(data.success){
 						document.location.reload();
 					} else {
-						subPanel.error();
+						var msg = 'unknown error';
+						if(data.warnings !== undefined){
+							log(data.warnings)
+							msg = '';
+							$.each(data.warnings, function(x, y){msg += x + ':' + y + '<br>'})
+						}
+						subPanel.error(msg);
 					}
 				},
-				error: function(){},
+				error: function(){
+					subPanel.error('request error');
+				},
 				dataType:'json'
 			})
+		},
+		error: function(msg){
+		//	log('error')
+			$('#sub-panel-warning').html(msg);
 		}
 	}
 	var taxOptimization = {
@@ -208,10 +224,10 @@
 
 <div id="add-sub-panel">
 	<input type="text" id="sub-name" placeholder="name of node" />
-	<input type="text" id="sub-url-name" placeholder="name of node" />
+	<input type="text" id="sub-url-name" placeholder="url name" />
 	<button id="send">send</button>
 	<button id="close">close</button>
-	<div id="sub-panel-warning"></div>
+	<div id="sub-panel-warning">123</div>
 </div>
 
 <table class="tax-list" style="min-width: 600px;" border="1" >

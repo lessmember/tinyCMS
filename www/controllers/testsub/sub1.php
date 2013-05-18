@@ -24,4 +24,10 @@ class TestsubSub1 extends Testsub_BaseController {
 		var_dump($res);
 	}
 
+	function preg(){
+		p('preg testing');
+		print preg_match('#^[\w \-\_\.\,\*]+$#u', 'Ластоногий апельсин number 1', $m);
+		p($m);
+	}
+
 }
