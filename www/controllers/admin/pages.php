@@ -14,4 +14,11 @@ class AdminPages  extends Admin_BaseController {
 				'content'	=> $content
 			))->render(1);
 	}
+
+	function remove($id){
+		$model = Core::model('pages');
+		$data = $model->infoById($id);
+		$model->delById($id);
+		return header('location:' . tpl::fullUrl('admin', 'pages', array($data->parent)));
+	}
 }

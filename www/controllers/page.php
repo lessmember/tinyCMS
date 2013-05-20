@@ -54,7 +54,7 @@ class Page extends Controller {
 		$pageId = $this->options['default.page'];
 		if($pageType == 'section')
 			return $this->section($pageId);
-		return $this->content($pageId); //TODO: move to DB, add DB part of config to Core
+		return $this->content($pageId);
 	}
 
 	private function build($data){

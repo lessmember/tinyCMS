@@ -18,18 +18,26 @@
 		border-collapse: collapse;
 	}
 	table.tax-list tr th:nth-child(1),table.tax-list tr td:nth-child(1)  {
-		width: 200px;
-		padding:0;
+		min-width: 200px;
 		border-spacing: 0;
 	}
 	table.tax-list tr td:nth-child(1) a{
 		text-decoration: none;
+		margin: 0 2px 0 0;
 		display: block;
 		width: 100%;
 		height: 26px;
+		color: #224;
 	}
-	table.tax-list tr td a:hover{
+	table.tax-list tr td:nth-child(1) a:hover{
 		background-color: #fee;
+		color: #422;
+	}
+	table.tax-list tr td:nth-child(2) a{
+		color: #048;
+	}
+	table.tax-list tr td:nth-child(2) a:hover{
+		color: #422;
 	}
 	table.tax-list tr th {
 		background-color: #ffffff;
@@ -156,7 +164,8 @@ $(window).load(function(){
 						<a class="text-btn edit-btn" href="/<?=(tpl::url('admin', 'page', array('edit', 'form', 'id' => $page->id)))?>"
 						   id="edit-<?=$page->id?>">edit</a>
 						<a class="text-btn edit-btn" href="/<?=(tpl::url('admin', 'page', array('view')))?>" id="view-<?=$page->id?>">view</a>
-						<a class="text-btn del-btn" id="del-<?=$page->id?>">delete</a>
+						<a class="text-btn del-btn" id="del-<?=$page->id?>"
+						   href="/<?=(tpl::url(array('admin', 'pages'),'remove', array($page->id)))?>">delete</a>
 						<span class="text-btn <?=($page->active ? '' : 'de')?>act-btn"
 						id="active-<?=$page->id?>"><?=($page->active ? 'de' : '')?>activate</span>
 					</td>

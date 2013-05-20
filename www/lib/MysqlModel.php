@@ -71,7 +71,9 @@ abstract class MysqlModel{
 		return $this->db->selectOne("SELECT {$fields} FROM `{$this->table}` WHERE `id` = ? ;", array(intval($id)));
 	}
 
-
+	function delById($id){
+		return $this->db->delete("DELETE FROM `{$this->table}` WHERE `id` = ? ", array(intval($id)));
+	}
 
 	function timeRandom($length = 64){
 		return substr(

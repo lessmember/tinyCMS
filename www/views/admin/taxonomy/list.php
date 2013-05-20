@@ -227,7 +227,7 @@
 	<input type="text" id="sub-url-name" placeholder="url name" />
 	<button id="send">send</button>
 	<button id="close">close</button>
-	<div id="sub-panel-warning">123</div>
+	<div id="sub-panel-warning"></div>
 </div>
 
 <table class="tax-list" style="min-width: 600px;" border="1" >
