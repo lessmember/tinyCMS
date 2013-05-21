@@ -12,6 +12,13 @@ class PagesModel extends MysqlModel{
 		return $this->db->select("SELECT {$fields} FROM `$this->table` WHERE `parent` = ? " . ($active ? "AND `active` = true " : ""), array($parent));
 	}
 
+	function countByParent($id){
+		$res = $this->db->selectOne("SELECT COUNT(`id`) as `pages_num` FROM `{$this->table}` WHERE `parent` = ? ", array($id));
+		if(is_object($res))
+			return $res->pages_num;
+		return false;
+	}
+
 	function contentByParent($parent, $active=true){
 		if(!$parent)
 			return array();

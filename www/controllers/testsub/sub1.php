@@ -30,4 +30,10 @@ class TestsubSub1 extends Testsub_BaseController {
 		p($m);
 	}
 
+	function pcount(){
+		$pModel = Core::model('pages');
+		$isEmpty = $pModel->countByParent(11);
+		p($isEmpty);
+	}
+
 }

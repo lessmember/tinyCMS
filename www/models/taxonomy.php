@@ -81,4 +81,13 @@ class TaxonomyModel extends MysqlModel{
 		);
 	}
 
+	function countByParent($id){
+		$res = $this->db->selectOne(
+			"SELECT COUNT(`id`) as `nodes_num` FROM `{$this->table}` WHERE `parent` = ? OR `parent_id_chain` LIKE ? ",
+			array($id, "%;{$id};%"));
+		if(is_object($res))
+			return $res->nodes_num;
+		return false;
+	}
+
 }
