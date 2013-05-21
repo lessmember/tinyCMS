@@ -67,6 +67,12 @@
 	a.text-btn{
 		color: #004;
 	}
+	a.del-btn{
+		color: #004;
+	}
+	a.del-btn-inactive{
+		color: #888;
+	}
 </style>
 
 <script type="text/javascript">
@@ -250,8 +256,9 @@
 			<span class="text-btn add-sub-btn" id="add-sub-<?=$sec->id?>">+ add sub node</span>
 			<?if($sec->id != 1):?>
 			<span class="text-btn edit-btn" id="edit-<?=$sec->id?>">edit</span>
-			<a class="text-btn del-btn" id="del-<?=$sec->id?>"
-				  href="/<?=(tpl::url(array('admin', 'taxonomy'),'remove', array($sec->id)))?>">- remove</a>
+			<a id="del-<?=$sec->id?>" class="text-btn del-btn<?=($sec->num_nodes ? '-inactive' : '')?>"
+				<?if(!$sec->num_nodes):?>  href="/<?=(tpl::url(array('admin', 'taxonomy'),'remove', array($sec->id)))?>" <?endif?>
+			>remove</a>
 			<span class="text-btn <?=($sec->active ? '' : 'de')?>act-btn"
 				  id="active-<?=$sec->id?>"><?=($sec->active ? 'de' : '')?>activate</span>
 			<?endif?>

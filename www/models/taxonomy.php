@@ -5,7 +5,14 @@ class TaxonomyModel extends MysqlModel{
 	protected $infoFields = array('id', 'parent', 'title', 'url_name', 'parent_id_chain');
 
 	function all(){
-		return $this->db->select("SELECT * FROM `{$this->table}` ORDER BY `parent`, `id` ");
+		return $this->db->select(
+		"SELECT * ,
+			(SELECT COUNT(tax2.`id`) as num_nodes FROM `{$this->table}` tax2 WHERE tax2.parent = tax1.id  ) +
+			(SELECT COUNT(pages.`id`) as num_pages FROM `pages` WHERE pages.parent = tax1.id  )
+			 as `num_nodes`
+			FROM  `{$this->table}` tax1
+			ORDER BY  `parent` ,  `id` "
+		);
 	}
 
 	function add($title, $urlName, $parent){
@@ -20,7 +27,8 @@ class TaxonomyModel extends MysqlModel{
 	function namesByParent($parent){
 		if(!$parent)
 			return array();
-		return $this->db->select("SELECT `id`, `title`, `url_name` FROM `{$this->table}` WHERE `parent` =? ", array($parent));
+		return $this->db->select("SELECT `id`, `title`, `url_name`
+			FROM `{$this->table}` WHERE `parent` =? ", array($parent));
 	}
 
 	function namesByChain($chain){
