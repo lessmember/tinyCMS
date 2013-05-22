@@ -355,18 +355,14 @@ class Admin extends Controller {
 		if(!in_array($type, array('page', 'taxonomy')) OR !in_array($act, array('on', 'off'))){
 			return print json_encode(array('success' => false, 'msg' => 'bad type'));
 		}
-		$actVal = ($act == 'on');// ? 0 : 1;
+		$actVal = ($act == 'on');
 		$names = array(
 			'page'	=> 'pages',
 			'taxonomy'	=> 'taxonomy'
 		);
 		$id = post('id');
-	//	p($names[$type]);
 		$model = Core::model($names[$type]);
-	//	$updated = $model->updateById(array('active' => $actVal), $id);
-
 		$updated = $model->activate($id, $actVal);
-
 		return print json_encode(array('success' => true, 'updated' => $updated));
 	}
 
