@@ -61,8 +61,8 @@
 </header>
 <body>
 <div id="top-menu">
-	<a href="/<?=tpl::url('admin', 'taxonomy')?>">taxonomy</a>
-	<a href="/<?=tpl::url('admin', 'pages')?>">pages</a>
+	<a href="/<?=tpl::url(array('admin', 'taxonomy'))?>">taxonomy</a>
+	<a href="/<?=tpl::url(array('admin', 'pages'))?>">pages</a>
 	<a href="/<?=tpl::url(array('admin', 'users'))?>">users</a>
 	<a href="/<?=tpl::url(array('admin', 'themes'))?>">themes</a>
 	<a href="/<?=tpl::url(array('admin', 'options'))?>">options</a>

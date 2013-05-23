@@ -10,12 +10,6 @@ class AdminTaxonomy  extends Admin_BaseController {
 
 	function index(){
 		return $this->listView();
-		$content = 'taxonomy administration sub class';
-		Core::view('admin/main',
-			array(
-				'title'		=> 'Content',
-				'content'	=> $content
-			))->render(1);
 	}
 
 	private function listView(){
@@ -67,6 +61,7 @@ class AdminTaxonomy  extends Admin_BaseController {
 		}
 
 		$id = $model->add($name, $urlName, $parent);
+		$this->denormalize();
 		return print json_encode(array('success' => true, 'id' => $id));
 	}
 
