@@ -5,7 +5,6 @@ class AdminTaxonomy  extends Admin_BaseController {
 	function __construct(){
 		parent::__construct();
 		Core::extLib('TaxonomyTree');
-		$this->regularPage();
 	}
 
 	function index(){

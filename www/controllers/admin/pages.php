@@ -4,7 +4,6 @@ class AdminPages  extends Admin_BaseController {
 
 	function __construct(){
 		parent::__construct();
-		$this->regularPage();
 	}
 
 	function index(){
