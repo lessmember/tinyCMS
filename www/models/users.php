@@ -25,6 +25,12 @@ class UsersModel extends MysqlModel{
 				) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ; ");
 	}
 
+	function all($limit=100, $offset=0){
+		$limit = intval($limit);
+		$offset = intval($offset);
+		return $this->db->select("SELECT * FROM `{$this->table}` LIMIT {$offset}, {$limit} ;");
+	}
+
 	function add($login, $pass, $email = ''){
 		$hash = $this->timeRandom(128);
 		$id = $this->insert(array(

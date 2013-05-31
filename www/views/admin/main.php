@@ -31,6 +31,17 @@
 			text-decoration: none;
 			border-radius: 5px;;
 		}
+		.text-btn-tiny{
+			 display: inline-block;
+			 padding: 1px 1px 1px 1px;
+			 text-align: center;
+			 min-width: 16px;
+			 border: 1px solid;
+			 cursor: pointer;
+			 text-decoration: none;
+			 border-radius: 3px;;
+			 margin: 1px;
+		 }
 		div#top-menu{
 			background-color: #eee;
 			display: table-cell;

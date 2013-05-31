@@ -51,7 +51,7 @@ abstract class MysqlModel{
 			$qdata[] = $val;
 		}
 		$sql = substr($sql, 0, -2);
-		$sql .= " WHERE " . $condition['query'];
+		$sql .= " WHERE " . $condition['query'] . ' ;';
 		$qdata = array_merge($qdata, $condition['data']);
 	//	p($sql);
 	//	p($qdata);

@@ -118,4 +118,4 @@ CREATE TABLE IF NOT EXISTS `users` (
 --
 
 INSERT INTO `users` (`id`, `login`, `pass`, `hash`, `email`, `is_admin`, `is_manager`, `is_moderator`, `banned`) VALUES
-(1, 'admin', 'd95645ad19168b4d9526fcf3d4f5e4b0cee663bef3a969c6af52267928542a73', '', 'admin@email', 1, 1, 1, 1);
+(1, 'admin', 'd95645ad19168b4d9526fcf3d4f5e4b0cee663bef3a969c6af52267928542a73', '', 'admin@email', 1, 1, 1, 0);
