@@ -34,4 +34,22 @@ class Option_valuesModel extends MysqlModel{
 		return $res;
 	}
 
+	function setByName($name, $value){
+		return $this->db->insert("INSERT INTO `option_values` (`option`, `value`)
+			VALUES ( (SELECT id FROM options WHERE `name` = ?), ? )",
+		array($name, $value));
+	}
+
+	function unsetById($id){
+		return $this->db->delete("DELETE FROM `option_values` WHERE `id` = ? ", array($id));
+	}
+
+	function byName($optionName){
+		return $this->db->select("SELECT ov.* FROM `option_values` ov
+			JOIN `options` op ON ov.option = op.id
+			WHERE op.`name` = ? ORDER BY `value` ",
+			array($optionName));
+	}
+
+
 }

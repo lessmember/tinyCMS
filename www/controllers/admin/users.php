@@ -2,6 +2,8 @@
 
 class AdminUsers extends Admin_BaseController {
 
+	protected $title = 'Users';
+
 	function __construct(){
 		parent::__construct();
 		$this->regularPage();
@@ -20,7 +22,7 @@ class AdminUsers extends Admin_BaseController {
 	function listView($page=1){
 		$page = intval($page);
 		$model = Core::model('users');
-		$limit = 10;
+		$limit = 10; // TODO
 		$offset = ($page-1) * $limit;
 		$data = $model->all($limit, $offset);
 	//	p($data[0]);
@@ -39,7 +41,7 @@ class AdminUsers extends Admin_BaseController {
 			'basePageUrl'	=> '/' . tpl::url(array('admin', 'users')),
 			'users'			=> $data,
 			'currentPage'	=> $page,
-			'maxPage'		=> 10
+			'maxPage'		=> 10 // TODO
 		))->render();
 
 		Core::view('admin/main',

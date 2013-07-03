@@ -18,15 +18,20 @@ var usersApp = {
 		//	var id = userApp.getId('banned-btn-');
 			usersApp.bane(this);
 		});
+		$('.edit-btn').change(function(e){
+
+		});
+		$('.del-btn').change(function(e){});
+		<? // TODO: edit login, email; reset pass?; edit role;  ?>
 	},
 	getId: function(elem, prefix){
-		return elem.id.substr(prefix.length);
+		return elem.parentNode.parentNode.id.substr('list-row-'.length);
 	},
 	bane: function(elem){
 		var id = usersApp.getId(elem, 'banned-btn-');
 		var action = $(elem).is(':checked');
 	//	log(action)
-	//	log(id)
+		log(id)
 		this.changeData(id, {banned: action})
 	},
 	changeData: function(id, data){
@@ -67,7 +72,7 @@ $(window).load(function(){
 			<th>Actions</th>
 		</tr>
 		<?foreach($users as $user):?>
-		<tr>
+		<tr id="list-row-<?=$user->id?>">
 			<td><?=$user->id?></td>
 			<td><?=$user->login?></td>
 			<td><?=$user->email?></td>
@@ -76,8 +81,8 @@ $(window).load(function(){
 			</td>
 			<td><input type="checkbox" id="banned-btn-<?=$user->id?>" class="banned-btn" <?=($user->banned ? ' checked="checked" ' : '')?> /></td>
 			<td>
-				<a class="text-button">edit</a>
-				<a class="text-button">remove</a>
+				<a class="text-btn edit-btn" id="edit-btn-<?=$user->id?>">edit</a>
+				<a class="text-btn del-btn" id="del-btn-<?=$user->id?>">remove</a>
 			</td>
 		</tr>
 		<?endforeach?>
