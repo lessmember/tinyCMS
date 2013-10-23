@@ -99,6 +99,8 @@ class Page extends Controller {
 		$taxModel = Core::model('taxonomy');
 		$parentData = $taxModel->infoById($parentId);
 	//	print tpl::html_table($parentData);
+		if($isSection){
+		}
 
 		// context menu
 		$contextModel = $isSection ? $taxModel : $model;
@@ -177,9 +179,15 @@ class Page extends Controller {
 		$pageModel = Core::model('pages');
 		$pagesData = $pageModel->contentByParent($curData->id);
 
+		// Face page -> to different place
+		if(isset($pagesData[0]) AND $pagesData[0]->role == 'parent_face'){
+			$faceData = array_shift($pagesData);
+		}
+
 		$content = Core::view($this->currentThemeUnit('section-content'), array(
 			'subSections'	=> $subSections,
-			'subPages'		=> $pagesData
+			'subPages'		=> $pagesData,
+			'face'			=> isset($faceData) ? $faceData : null
 		))->render();
 
 		$data = array(

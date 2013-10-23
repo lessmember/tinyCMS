@@ -2,14 +2,15 @@
 
 class PagesModel extends MysqlModel{
 	protected $table = 'pages';
-	protected $insertFields = array('parent', 'title', 'url_name', 'content', 'active');
-	protected $infoFields = array('id', 'parent', 'title', 'url_name', 'content', 'active');
+	protected $insertFields = array('parent', 'title', 'url_name', 'content', 'active', 'role');
+	protected $infoFields = array('id', 'parent', 'title', 'url_name', 'content', 'active', 'role');
 
 	function namesByParent($parent, $active=true){
 		if(!$parent)
 			return array();
 		$fields = '`' . implode('`,`', array_diff($this->infoFields, array('content'))) . '`';
-		return $this->db->select("SELECT {$fields} FROM `$this->table` WHERE `parent` = ? " . ($active ? "AND `active` = true " : ""), array($parent));
+		return $this->db->select("SELECT {$fields} FROM `$this->table` WHERE `parent` = ? " . ($active ? "AND `active` = true " : "") . " ORDER BY `role` DESC ",
+			array($parent));
 	}
 
 	function countByParent($id){
@@ -23,7 +24,7 @@ class PagesModel extends MysqlModel{
 		if(!$parent)
 			return array();
 		$fields = '`' . implode('`,`', $this->infoFields) . '`';
-		return $this->db->select("SELECT {$fields} FROM `$this->table` WHERE `parent` = ? ". ($active ? "AND `active` = true " : ""), array($parent));
+		return $this->db->select("SELECT {$fields} FROM `$this->table` WHERE `parent` = ? ". ($active ? "AND `active` = true " : "") . "  ORDER BY `role` DESC ", array($parent));
 	}
 
 	function add($data){

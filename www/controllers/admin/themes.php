@@ -94,6 +94,8 @@ class AdminThemes extends Admin_BaseController {
 			$this->uploadErrors[] = "Empty FILES entity.";
 			return false;
 		}
+
+		// Move archive part
 		$fileData = $_FILES[$fileName];
 		if(!file_exists($fileData['tmp_name'])){
 			$this->uploadErrors[] = "Uploaded file was not found.";
@@ -138,9 +140,11 @@ class AdminThemes extends Admin_BaseController {
 			}
 			$list[] = $filePath;
 		}
-		// save properties
+
+		// Save properties
 		$noFileError = ($noFileError AND
 			FALSE !== file_put_contents( $targetDir . '/' . 'properties.json', json_encode($themeProperties)));
+
 		if($noFileError)
 			return header('location:' . tpl::fullUrl(array('admin', 'themes')));
 		return $this->warning("Some troubles");

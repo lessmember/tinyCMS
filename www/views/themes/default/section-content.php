@@ -1,3 +1,10 @@
+
+<?// Part of section face content (linked page) ?>
+<?if($face):?>
+	<?//<h3><?=$face->title ? ></h3>?>
+	<div><?=($face->content)?></div>
+<?endif?>
+
 <?foreach($subSections as $unit):?>
 <div class="section-head"><a href="<?=tpl::url('page','section',array($unit->url_name))?>"><?=$unit->title?></a></div>
 <?endforeach?>

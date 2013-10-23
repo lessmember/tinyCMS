@@ -74,6 +74,11 @@
 	table.page-list tr td span.page-deactivated{
 		color: #888;
 	}
+	span.role-face{
+		color: #e22;
+		font-size:0.75em;
+		font-weight: bolder;
+	}
 </style>
 
 <script type="text/javascript">
@@ -158,7 +163,7 @@ $(window).load(function(){
 				</tr>
 				<?foreach($pages as $page):?>
 				<tr>
-					<td><?=$page->id?></td>
+					<td><?=$page->id?><?=($page->role == 'parent_face' ? ' <span class="role-face">[FACE]</span>': '')?></td>
 					<td><span class="<?=(!$page->active? 'page-deactivated' : '')?>"><?=$page->title?></span></td>
 					<td>
 						<a class="text-btn edit-btn" href="/<?=(tpl::url(array('admin', 'pages'), 'editForm', array('id' => $page->id)))?>"

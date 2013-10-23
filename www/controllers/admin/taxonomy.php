@@ -60,7 +60,15 @@ class AdminTaxonomy  extends Admin_BaseController {
 		}
 
 		$id = $model->add($name, $urlName, $parent);
-		$this->denormalize();
+		Core::model('pages')->add(array(
+			'parent'	=> $id,
+			'title'		=> $name,
+			'url_name'	=> $urlName . '_face',
+			'active'	=> TRUE,
+			'content'=> '',
+			'role'		=> 'parent_face'
+		));
+		$this->denormalize(false);
 		return print json_encode(array('success' => true, 'id' => $id));
 	}
 
@@ -125,11 +133,11 @@ class AdminTaxonomy  extends Admin_BaseController {
 		}
 	}
 
-	function denormalize(){
+	function denormalize($report=true){
 		$model = Core::model('taxonomy');
 		$updated = $model->denormalize();
 		$this->contentType('application/json');
-		return $this->jsonResponse(array('success'=>true, 'changed'	=> $updated));
+		return $report ? $this->jsonResponse(array('success'=>true, 'changed'	=> $updated)) : '';
 	}
 
 	function activate($act){
